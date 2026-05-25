@@ -27,7 +27,6 @@
       <li><a href="#economics">Economics</a></li>
       <li><a href="#findings">Findings</a></li>
       <li><a href="#contributions">Patterns</a></li>
-      <li><a href="#method">Method</a></li>
       <li><a href="#about">About</a></li>
     </ul>
   </div>
@@ -36,7 +35,7 @@
 <header class="hero">
   <div class="container">
     <div class="eyebrow">Clinical Decision Support · Independent Evaluation</div>
-    <h1>I measure whether clinical AI is <em>actually safe</em> to put in front of patients.</h1>
+    <h1>I measure whether clinical AI is <em>actually safe</em> to put in front of patients and clinicians.</h1>
     <p class="sub">
       A physician-built harness — seven benchmark suites, eleven systems, fourteen
       hundred scored queries. Hand-curated traps, blinded results, real failure
@@ -72,19 +71,12 @@
 
 <section id="scope" class="tight">
   <div class="container">
-    <div class="scope-grid">
+    <div class="scope-grid single">
       <div class="scope">
         <div class="bar"></div>
         <div>
-          <div class="lbl">In scope on this site</div>
-          <p id="scope-in"></p>
-        </div>
-      </div>
-      <div class="scope out">
-        <div class="bar"></div>
-        <div>
-          <div class="lbl">Reported separately</div>
-          <p id="scope-out"></p>
+          <div class="lbl">What this site covers</div>
+          <p id="scope-blurb"></p>
         </div>
       </div>
     </div>
@@ -122,7 +114,7 @@
       <h2>Blinded leaderboard</h2>
     </div>
     <p style="max-width:720px; color:var(--text-dim); margin:0 0 36px;">
-      Eight systems, scored on the Golden suite with the production rubric.
+      Nine systems, scored on the Golden suite with the production rubric.
       Vendor identities are withheld; categories are accurate.
       Detailed vendor-attributed reports are shared privately with each team.
     </p>
@@ -135,7 +127,6 @@
             <th class="num">Compl.</th>
             <th class="num">Specificity</th>
             <th class="num">Citations</th>
-            <th class="num">Critical err.</th>
             <th class="num">Latency</th>
             <th class="num">$ / query</th>
           </tr>
@@ -143,7 +134,7 @@
         <tbody id="lb-body"></tbody>
       </table>
     </div>
-    <div class="lb-note">All values 0–100 unless marked. Critical errors out of 60 queries. Sorted by content-dimension total.</div>
+    <div class="lb-note">All values 0–100 unless marked. Sorted by content-dimension total.</div>
 
     <div style="margin-top:64px;">
       <div class="section-head" style="margin-bottom:24px;">
@@ -159,7 +150,7 @@
   <div class="container">
     <div class="section-head">
       <span class="num">05</span>
-      <h2>How the harness evolved — <em>a year of iteration</em></h2>
+      <h2>How the harness evolved — <em>four months of iteration</em></h2>
     </div>
     <div class="timeline" id="timeline-list"></div>
     <div id="timeline-framing"></div>
@@ -200,16 +191,6 @@
       specific vendors and models on the leaderboard.
     </p>
     <div class="contributions" id="contributions-list"></div>
-  </div>
-</section>
-
-<section id="method">
-  <div class="container">
-    <div class="section-head">
-      <span class="num">09</span>
-      <h2>Methodology</h2>
-    </div>
-    <div class="method-list" id="method-list"></div>
   </div>
 </section>
 

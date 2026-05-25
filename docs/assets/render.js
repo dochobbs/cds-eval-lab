@@ -24,9 +24,8 @@
     </div>
   `).join(""));
 
-  // Scope callouts
-  setText("scope-in", data.scope.what_is_here);
-  setText("scope-out", data.scope.what_is_not_here);
+  // Scope callout (single)
+  setText("scope-blurb", data.scope.blurb);
 
   // Suites — with provenance and turn tags
   const suiteTagClass = label => {
@@ -74,7 +73,6 @@
     (b.accuracy + b.completeness + b.specificity) -
     (a.accuracy + a.completeness + a.specificity)
   );
-  const ceClass = ce => ce === 0 ? "good" : ce <= 5 ? "" : ce <= 10 ? "warn" : "bad";
   const fmtCost = c => c === 0 ? "$0.00" : "$" + c.toFixed(c < 0.1 ? 3 : 2);
   setHTML("lb-body", sortedLb.map(r => `
     <tr>
@@ -86,7 +84,6 @@
       <td class="num">${esc(r.completeness)}</td>
       <td class="num">${esc(r.specificity)}</td>
       <td class="num">${esc(r.citations)}</td>
-      <td class="num ${ceClass(r.critical_errors)}">${esc(r.critical_errors)}</td>
       <td class="num">${esc(r.latency_s)}s</td>
       <td class="num">${esc(fmtCost(r.cost_per_q_usd))}</td>
     </tr>
@@ -179,14 +176,6 @@
       <h3>${esc(f.headline)}</h3>
       <p>${esc(f.body)}</p>
     </div>
-  `).join(""));
-
-  // Methodology
-  setHTML("method-list", data.methodology.map(m => `
-    <details class="method">
-      <summary>${esc(m.title)}</summary>
-      <div class="body">${esc(m.body)}</div>
-    </details>
   `).join(""));
 
   // About

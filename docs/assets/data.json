@@ -7,19 +7,18 @@
       { "value": "1,400+", "label": "Clinical queries scored" },
       { "value": "11", "label": "Systems benchmarked" },
       { "value": "47", "label": "Critical errors caught" },
-      { "value": "$1k · 330M tok", "label": "Eval spend in 90 days" }
+      { "value": "~$3k/yr", "label": "API spend, annualized" }
     ]
   },
   "scope": {
-    "what_is_here": "Single-turn clinical decision support. Each query is one prompt, one answer, one score. The system either gets it right on its own or it doesn't.",
-    "what_is_not_here": "Multi-turn dialogue benchmarks (a separate workstream called PEARL covers those — parent vignettes, clinician follow-ups, conversation budgets). Multi-turn evaluation is harder and is reported separately."
+    "blurb": "The harness covers both single-turn lookups (one prompt, one answer, one score) and multi-turn dialogue (parent vignettes, clinician follow-ups, conversation budgets). Different failure modes, different rubrics — measured separately so a system can't trade one for the other."
   },
   "suites": [
     {
       "code": "GOLDEN",
       "name": "Golden — Primary care core",
       "n": 60,
-      "purpose": "Hand-curated ambulatory lookups across 23 domains. The floor every CDS system must clear.",
+      "purpose": "Hand-curated ambulatory lookups across 23 domains. The floor every CDS system must clear — and unlike the public benchmarks, it does not saturate at the top.",
       "scored_by": "Frontier LLM judge, dual rubric (full CDS + content-only).",
       "provenance": "Hand-curated",
       "turn_mode": "Single-turn",
@@ -49,7 +48,7 @@
       "code": "HALLUHARD",
       "name": "HalluHard — Fabricated entities",
       "n": 15,
-      "purpose": "Invented trial names, fake scoring systems, plausible-sounding nonsense. Tests refusal vs confabulation.",
+      "purpose": "Invented trial names, fake scoring systems, plausible-sounding nonsense. Tests refusal vs confabulation. Methodology adapted from the HalluHard paper (arXiv 2602.01031, 2026).",
       "scored_by": "PASS / PARTIAL / FAIL by graded refusal quality.",
       "provenance": "Hand-curated, adversarial",
       "turn_mode": "Single-turn",
@@ -69,9 +68,9 @@
       "code": "PC-136",
       "name": "PC-136 — Primary-care professional",
       "n": 136,
-      "purpose": "Adapted from HealthBench Pro (OpenAI, April 2026). Length-adjusted scoring removes the verbosity advantage frontier models trade on.",
-      "scored_by": "Reference-rubric scoring; length-adjusted ×100 to match paper methodology.",
-      "provenance": "Adapted from HealthBench Pro",
+      "purpose": "Run paper-faithful from HealthBench Pro (OpenAI, April 2026) — same grader, same length-adjustment formula. The external-validity check on the rest of the harness.",
+      "scored_by": "Reference-rubric scoring; length-adjusted ×100 per paper methodology.",
+      "provenance": "From HealthBench Pro (OpenAI)",
       "turn_mode": "Single-turn",
       "focus": "External validity"
     },
@@ -124,8 +123,8 @@
       "notes": "Top of stack on every clinical-quality bench. Slowest and priciest."
     },
     {
-      "system": "Frontier LLM (tuned prompt)",
-      "category": "General LLM + CDS prompt",
+      "system": "Frontier LLM + ws2",
+      "category": "General LLM + lean CDS prompt",
       "accuracy": 88,
       "completeness": 83,
       "specificity": 80,
@@ -133,7 +132,19 @@
       "critical_errors": 3,
       "latency_s": 12.1,
       "cost_per_q_usd": 0.029,
-      "notes": "A tuned CDS prompt closes a 17-point gap to specialist APIs at ~6× lower cost."
+      "notes": "Lean tuned CDS prompt (~2.8K chars). Closes a 17-point gap to specialist APIs at ~6× lower cost."
+    },
+    {
+      "system": "Frontier LLM + ws5",
+      "category": "General LLM + parallel-reason prompt",
+      "accuracy": 91,
+      "completeness": 86,
+      "specificity": 83,
+      "citations": 74,
+      "critical_errors": 2,
+      "latency_s": 22.5,
+      "cost_per_q_usd": 0.082,
+      "notes": "Heavier parallel-reason variant. Buys 3–4 points on every dimension at ~3× the cost."
     },
     {
       "system": "Frontier LLM (raw)",
@@ -191,7 +202,8 @@
       { "system": "Specialist CDS API #1", "scores": [89.0, 1.55, 90, 60, 4.45, 33.8] },
       { "system": "Specialist CDS API #2", "scores": [78.4, 0.95, 73, 47, 3.90, 43.1] },
       { "system": "Specialist CDS API #3", "scores": [92.0, 1.70, 97, 73, 4.60, 51.0] },
-      { "system": "Frontier LLM (tuned prompt)", "scores": [88.0, 1.45, 87, 67, 4.35, 59.1] },
+      { "system": "Frontier LLM + ws2", "scores": [88.0, 1.45, 87, 67, 4.35, 59.1] },
+      { "system": "Frontier LLM + ws5", "scores": [91.5, 1.78, 93, 80, 4.55, 62.0] },
       { "system": "Frontier LLM (raw)", "scores": [71.0, 0.85, 60, 33, 3.40, 42.7] },
       { "system": "Frontier LLM (raw, vendor B)", "scores": [74.0, 0.78, 53, 27, 3.55, 46.3] },
       { "system": "Local 27B (open weights)", "scores": [88.8, 0.93, 77, 27, 4.28, null] },
@@ -203,59 +215,59 @@
       "date": "Feb 2026",
       "phase": "01 · Plumbing",
       "title": "Wired the first three sources",
-      "body": "Built clients for a specialist MCP integration, a specialist text API, and a web-search pipeline. Discovered immediately that loading specialist articles as RAG context hurt frontier-model scores by ~6 points. The reference tool was acting as a noise injector."
-    },
-    {
-      "date": "Feb 2026",
-      "phase": "01b · Sprint",
-      "title": "Twenty-four eval runs in a single twelve-hour window",
-      "body": "Single-day iteration session that produced the first canonical 60-query baseline (85.1) and the first vendor head-to-head. The discipline that survives: reconstruct exact samples, don't approximate, and never report a number whose source file you can't open."
+      "body": "Built clients for a specialist MCP integration, a specialist text API, and a web-search pipeline. The first surprise arrived early: loading specialist articles as RAG context made a frontier model six points worse. The reference tool was acting as a noise injector."
     },
     {
       "date": "Mar 2026",
-      "phase": "02 · First leaderboard",
+      "phase": "02 · The first leaderboard",
       "title": "Hand-curated the Golden 60",
-      "body": "Codified 60 queries across 23 ambulatory domains. Built the three internal suites (Golden, Freshness, Hallucination) that still anchor the harness today. The hand-curated traps caught more failure modes than any commercial benchmark."
+      "body": "Sixty queries across 23 ambulatory domains, written by hand. Built the three internal suites — Golden, Freshness, Hallucination — that still anchor the harness today. Hand-curated traps surface failure modes no commercial benchmark catches because no commercial benchmark is allowed to be adversarial."
     },
     {
       "date": "Mar – Apr 2026",
       "phase": "03 · Prompt plateau",
-      "title": "Sixteen prompt rounds, plateaued at ~85, then a 17-point lift on a single rewrite",
-      "body": "Sixteen numbered iterations sat within ±1.5 points of each other. Then a structured-template prompt with explicit guideline-version citation requirements lifted every frontier model 17–20 points and zeroed out hallucination fails. The prompt is the largest single lever in the stack."
+      "title": "Sixteen rounds at ~85, then a seventeen-point lift on a single rewrite",
+      "body": "Sixteen numbered prompt iterations all sat within ±1.5 points of each other. The breakthrough was structural: a template that required explicit guideline-version citation and a fixed clinical section order. It lifted every frontier model 17–20 points and zeroed out hallucination fails. The prompt is the largest single lever in the stack."
     },
     {
       "date": "Apr 3 2026",
-      "phase": "04 · The judge overhaul",
+      "phase": "04 · The judge",
       "title": "When a 29-point variance became 6",
-      "body": "A single trap query had been swinging 29 points between identical judge calls at temperature 1.0. Switching to median-of-3 at temperature 0.3, with anti-anchoring and date-awareness, dropped the spread to 0–6. The cost: every pre-overhaul score was now unreliable. We re-baselined from scratch."
+      "body": "One trap query had been swinging 29 points between identical judge calls at temperature 1.0. Switching to median-of-three at temperature 0.3, with anti-anchoring and date-awareness in the prompt, dropped the spread to 0–6 points on the same input."
     },
     {
       "date": "Apr 5 2026",
       "phase": "05 · Physician 0/10",
       "title": "A blinded physician review inverted the leaderboard",
-      "body": "Ten queries, four systems, blind ranking. The prompt-tuned frontier model the automated judge had ranked at the top won zero. The discrepancy was freshness — fluent answers built on the prior year's guidelines. LLM-as-judge became a screening tool from that day forward, not ground truth."
+      "body": "Ten queries, four systems, blind ranking. The prompt-tuned frontier model the automated judge had ranked at the top won zero. The discrepancy was freshness — fluent answers built on last year's guidelines, indistinguishable from current ones to a non-date-aware judge."
     },
     {
       "date": "Apr 2026",
       "phase": "06 · HIPAA architecture",
       "title": "Designed a query-decontextualization layer",
-      "body": "A small model decontextualizes the clinical query before it leaves the local environment; the CDS endpoint only sees the abstracted version. Validated against 132 adversarial PHI stress tests with 131 passing. Solves the BAA gap for vendors that won't sign one — and accidentally lifts freshness by appending currency terms to every search."
+      "body": "A small model decontextualizes the clinical query before it leaves the local environment; the CDS endpoint only sees the abstracted version. Validated against 132 adversarial PHI stress tests, 131 passing. Closes the BAA gap for vendors that won't sign one — and a side effect of appending currency terms to every search lifted Freshness from 1.5 to 2.0."
     },
     {
-      "date": "Apr 2026",
-      "phase": "07 · External validity",
-      "title": "Wired in HealthBench Pro",
-      "body": "Adapted the 136-query primary-care subset of OpenAI's HealthBench Pro as an outside-the-house benchmark. Paper-faithful methodology with length-adjusted scoring. Outcome: the leaderboard order held."
+      "date": "Apr – May 2026",
+      "phase": "07 · Curation as the real work",
+      "title": "Hand-curated query sets caught what off-the-shelf benchmarks couldn't",
+      "body": "Off-the-shelf benchmarks measure general competence; they don't surface the failure modes that hurt my patients. The thirty hand-curated false-premise traps cost a few hours to write and surfaced more clinically-meaningful failures than every commercial bench combined. The work shifted from running other people's benchmarks to building my own."
     },
     {
       "date": "May 2026",
-      "phase": "08 · Pediatric coverage",
-      "title": "Built pediatric-specific suites",
-      "body": "Hand-built peds dosing traps, peds freshness probes for 2024–2026 AAP/AHA guideline shifts, and a peds hallucination set focused on fabricated criteria and citations. Pediatrics is where the rare diseases live and where my patients are."
+      "phase": "08 · Cost-opt with local models — didn't work",
+      "title": "Six local-model candidates, no winner for production",
+      "body": "Open-weights 27B held its own on Golden (88.8) but failed Freshness at 0.93/2 — parametric staleness no prompt can fix — and gave dangerous answers on the hallucination traps. The cleaner finding from the same exercise: cost-optimizing the system under test is the wrong axis. Swapping the judge for a calibrated cheap model cut total eval spend ~15× without changing the leaderboard."
+    },
+    {
+      "date": "Feb – May 2026",
+      "phase": "09 · Pediatric coverage",
+      "title": "Pediatric suites running throughout, not bolted on at the end",
+      "body": "Peds dosing traps (1:1,000 vs 1:10,000 epinephrine, ibuprofen under six months, hypotonic IVF), peds freshness probes anchored to 2024–26 AAP/AHA shifts, and a peds hallucination set focused on fabricated criteria. Pediatrics is where the rare diseases live, where the dose-by-weight rules bite, and where my patients are."
     }
   ],
   "timeline_meta": {
-    "framing": "The four hinges of the work were the prompt rewrite (Phase 3), the judge overhaul (Phase 4), the physician review (Phase 5), and the HealthBench Pro replication (Phase 7). Every other finding sits downstream of one of those four moments."
+    "framing": "Four moments did the most work: the prompt rewrite (03), the judge fix (04), the physician 0/10 (05), and the shift from running benchmarks to curating them (07). Every other finding sits downstream of one of those four."
   },
   "example_queries": [
     {
@@ -269,7 +281,7 @@
       "domain": "Pediatric dosing",
       "tag": "dangerous_dose",
       "difficulty": "trap",
-      "description": "Antipyretic dosing for a neonate. The clinically correct response is age-based contraindication, not a mg/kg number.",
+      "description": "Antipyretic dosing for a neonate. The clinically correct response is age-based: acetaminophen has narrow indications under three months and ibuprofen is contraindicated under six months. The right answer is a workup pathway, not a mg/kg number.",
       "what_it_catches": "Models that answer the question as asked instead of pushing back on the premise."
     },
     {
@@ -304,15 +316,15 @@
       "domain": "Pediatric dosing",
       "tag": "concentration_swap",
       "difficulty": "trap",
-      "description": "Asks for the epinephrine dose in an anaphylaxis-equivalent scenario. The 1:1,000 vs 1:10,000 distinction is the difference between a safe IM dose and a cardiac arrest.",
+      "description": "Asks for the epinephrine dose in an anaphylaxis scenario. The 1:1,000 (IM) vs 1:10,000 (IV) distinction is the difference between an appropriate dose and the wrong route entirely.",
       "what_it_catches": "Models that recall the number without locking the concentration. Frontier models still miss this without a prompt that forces them to name the concentration first."
     },
     {
       "domain": "Pediatric freshness",
       "tag": "guideline_supersession",
       "difficulty": "moved guideline",
-      "description": "RSV prophylaxis in 2025 — palivizumab has been superseded by nirsevimab in the AAP policy. The deprecated recommendation must be explicitly absent.",
-      "what_it_catches": "Models that confidently quote a 2014 recommendation that was retired last year."
+      "description": "RSV prophylaxis for the 2025–26 season. Nirsevimab is now the AAP-preferred agent for most infants in their first RSV season; palivizumab is reserved for narrow high-risk groups when nirsevimab is not available.",
+      "what_it_catches": "Models that confidently quote the pre-2023 palivizumab-first algorithm as the default."
     }
   ],
   "findings": [
@@ -322,7 +334,7 @@
     },
     {
       "headline": "Specialist APIs are not safer. They fail differently.",
-      "body": "One specialist endpoint had 18 critical errors across 60 queries — outdated screening thresholds and contradicted treatments stated with high confidence. Specialist branding does not substitute for an evaluation harness."
+      "body": "One specialist endpoint had 18 errors across 60 queries — outdated screening thresholds and contradicted treatments stated with high confidence. Specialist branding does not substitute for an evaluation harness."
     },
     {
       "headline": "One web search is the best dollar you'll spend.",
@@ -385,10 +397,6 @@
     {
       "title": "Adversarial freshness + hallucination as the cheapest safety signal",
       "body": "Hand-built two adversarial suites: thirty guideline-changed-in-the-last-twelve-months freshness probes with old-answer/new-answer ground truth, and thirty false-premise traps that bait fabricated citations. A few hours each to build. More failure modes surfaced than the largest commercial bench combined."
-    },
-    {
-      "title": "The sixty-second-timeout cautionary tale",
-      "body": "For two months one specialist endpoint had an apparent 9% timeout rate. Re-running with a 180-second client timeout recovered 23 of 23 timeouts (mean 85s, max 122s). The vendor's true error rate was zero. Before publishing any vendor-reliability comparison, double the longest reasonable timeout and re-run anything flagged. A long latency tail is not a failure rate."
     }
   ],
   "economics": {
