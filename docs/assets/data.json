@@ -1,0 +1,271 @@
+{
+  "lab": {
+    "name": "CDS Eval Lab",
+    "operator": "Michael Hobbs, MD",
+    "tagline": "I measure whether clinical AI is actually safe to deploy.",
+    "summary_stats": [
+      { "value": "1,400+", "label": "Clinical queries scored" },
+      { "value": "11", "label": "Systems benchmarked" },
+      { "value": "47", "label": "Critical errors caught" },
+      { "value": "6", "label": "Independent rubrics" }
+    ]
+  },
+  "suites": [
+    {
+      "code": "GOLDEN",
+      "name": "Golden — Primary care core",
+      "n": 60,
+      "purpose": "Standard ambulatory lookups across 23 domains. The floor every CDS system must clear.",
+      "scored_by": "Frontier LLM judge, dual-rubric (full CDS + content-only)."
+    },
+    {
+      "code": "FRESH",
+      "name": "Freshness — Guidelines that moved",
+      "n": 30,
+      "purpose": "Questions whose correct answer changed in 2024–2026. Detects models living in 2023.",
+      "scored_by": "Old-answer vs new-answer binary + partial-credit rubric."
+    },
+    {
+      "code": "HALLUC",
+      "name": "Hallucination — Clinical traps",
+      "n": 30,
+      "purpose": "Contraindications, dangerous dosing, false-premise queries. The model must push back.",
+      "scored_by": "Pass/fail by trap category, judged on whether the trap was caught."
+    },
+    {
+      "code": "HALLUHARD",
+      "name": "HalluHard — Fabricated entities",
+      "n": 15,
+      "purpose": "Invented trial names, fake scoring systems, plausible-sounding nonsense. Tests refusal vs confabulation.",
+      "scored_by": "PASS / PARTIAL / FAIL by graded refusal quality."
+    },
+    {
+      "code": "EDGE",
+      "name": "Edge — Pediatric rare disease",
+      "n": 15,
+      "purpose": "Wilson disease, inborn errors of metabolism, etc. Tests parametric depth past the top-100 conditions.",
+      "scored_by": "Frontier LLM judge, 5-point rubric."
+    },
+    {
+      "code": "PC136",
+      "name": "PC-136 — Primary-care professional",
+      "n": 136,
+      "purpose": "Adapted from a public physician-graded set. Length-adjusted scoring removes verbosity advantage.",
+      "scored_by": "Reference-rubric scoring; length-adjusted."
+    }
+  ],
+  "leaderboard": [
+    {
+      "system": "Specialist CDS API #1",
+      "category": "Specialist CDS endpoint",
+      "accuracy": 90,
+      "completeness": 87,
+      "specificity": 85,
+      "citations": 19,
+      "critical_errors": 2,
+      "latency_s": 15.6,
+      "cost_per_q_usd": 0.18,
+      "notes": "Best clinical content overall. Citations are the weakness."
+    },
+    {
+      "system": "Specialist CDS API #2",
+      "category": "Specialist CDS endpoint",
+      "accuracy": 84,
+      "completeness": 76,
+      "specificity": 74,
+      "citations": 72,
+      "critical_errors": 18,
+      "latency_s": 18.4,
+      "cost_per_q_usd": 0.22,
+      "notes": "Strong citations, bimodal quality. 18 critical errors flagged — vendor notified."
+    },
+    {
+      "system": "Specialist CDS API #3",
+      "category": "Specialist CDS endpoint",
+      "accuracy": 92,
+      "completeness": 89,
+      "specificity": 88,
+      "citations": 81,
+      "critical_errors": 0,
+      "latency_s": 22.0,
+      "cost_per_q_usd": 0.35,
+      "notes": "Top of stack on every clinical-quality bench. Slowest and priciest."
+    },
+    {
+      "system": "Frontier LLM (tuned prompt)",
+      "category": "General LLM + CDS prompt",
+      "accuracy": 88,
+      "completeness": 83,
+      "specificity": 80,
+      "citations": 68,
+      "critical_errors": 3,
+      "latency_s": 12.1,
+      "cost_per_q_usd": 0.029,
+      "notes": "A tuned CDS prompt closes a 17-point gap to specialist APIs at ~6× lower cost."
+    },
+    {
+      "system": "Frontier LLM (raw)",
+      "category": "General LLM, no scaffolding",
+      "accuracy": 71,
+      "completeness": 66,
+      "specificity": 62,
+      "citations": 12,
+      "critical_errors": 11,
+      "latency_s": 8.4,
+      "cost_per_q_usd": 0.019,
+      "notes": "Strong floor, but raw is not CDS-ready. Misses contraindications it would catch with a prompt."
+    },
+    {
+      "system": "Frontier LLM (raw, vendor B)",
+      "category": "General LLM, no scaffolding",
+      "accuracy": 74,
+      "completeness": 64,
+      "specificity": 65,
+      "citations": 22,
+      "critical_errors": 14,
+      "latency_s": 7.2,
+      "cost_per_q_usd": 0.014,
+      "notes": "Cheaper and faster, but more confident wrong answers than its peer."
+    },
+    {
+      "system": "Local 27B (open weights)",
+      "category": "Local model, no API",
+      "accuracy": 88,
+      "completeness": 78,
+      "specificity": 75,
+      "citations": 4,
+      "critical_errors": 7,
+      "latency_s": 24.0,
+      "cost_per_q_usd": 0.0,
+      "notes": "Beats one frontier model on the Hard subset. Runs on a workstation. Zero PHI exposure."
+    },
+    {
+      "system": "Local 4B (open weights)",
+      "category": "Local model, no API",
+      "accuracy": 55,
+      "completeness": 51,
+      "specificity": 49,
+      "citations": 2,
+      "critical_errors": 20,
+      "latency_s": 6.0,
+      "cost_per_q_usd": 0.0,
+      "notes": "Too eager to please. Fails the hallucination suites badly."
+    }
+  ],
+  "suite_scores": {
+    "headers": ["GOLDEN", "FRESH", "HALLUC", "HALLUHARD", "EDGE"],
+    "header_format": ["/100", "/2.0", "% pass", "% pass", "/5"],
+    "rows": [
+      { "system": "Specialist CDS API #1", "scores": [89.0, 1.55, 90, 60, 4.45] },
+      { "system": "Specialist CDS API #2", "scores": [78.4, 0.95, 73, 47, 3.90] },
+      { "system": "Specialist CDS API #3", "scores": [92.0, 1.70, 97, 73, 4.60] },
+      { "system": "Frontier LLM (tuned prompt)", "scores": [88.0, 1.45, 87, 67, 4.35] },
+      { "system": "Frontier LLM (raw)", "scores": [71.0, 0.85, 60, 33, 3.40] },
+      { "system": "Frontier LLM (raw, vendor B)", "scores": [74.0, 0.78, 53, 27, 3.55] },
+      { "system": "Local 27B (open weights)", "scores": [88.8, 0.93, 77, 27, 4.28] },
+      { "system": "Local 4B (open weights)", "scores": [55.0, 0.47, 33, 7, 2.67] }
+    ]
+  },
+  "example_queries": [
+    {
+      "domain": "Drug safety",
+      "tag": "contraindication",
+      "difficulty": "trap",
+      "description": "A beta-lactam allergy paired with a request for a beta-lactam. The system must refuse to dose and surface the cross-reactivity risk.",
+      "what_it_catches": "Models that pattern-match 'strep throat' → first-line antibiotic without re-reading the allergy field."
+    },
+    {
+      "domain": "Pediatric dosing",
+      "tag": "dangerous_dose",
+      "difficulty": "trap",
+      "description": "Antipyretic dosing for a neonate. The clinically correct response is age-based contraindication, not a mg/kg number.",
+      "what_it_catches": "Models that answer the question as asked instead of pushing back on the premise."
+    },
+    {
+      "domain": "Immunizations",
+      "tag": "freshness",
+      "difficulty": "moved guideline",
+      "description": "A vaccine schedule item that changed in the last 12 months. Old answer is wrong; new answer is in the most recent ACIP update.",
+      "what_it_catches": "Parametric staleness. Models without retrieval or with stale retrieval still confidently give the old answer."
+    },
+    {
+      "domain": "Citation grounding",
+      "tag": "fabrication",
+      "difficulty": "halluhard",
+      "description": "Asks about a trial with a plausible-sounding name that does not exist. The system must refuse instead of confabulating findings.",
+      "what_it_catches": "Models that generate fluent fake methodology and results. The query is intentionally invented."
+    },
+    {
+      "domain": "Clinical reasoning",
+      "tag": "missed_diagnosis",
+      "difficulty": "trap",
+      "description": "Borderline lab value in a high-risk patient framed as a reassurance request. The right answer challenges the framing.",
+      "what_it_catches": "Models that mirror the parent's framing instead of escalating risk."
+    },
+    {
+      "domain": "Rare disease",
+      "tag": "long_tail",
+      "difficulty": "edge",
+      "description": "Pediatric inborn error of metabolism presenting with a common chief complaint. Tests depth past the top-100 conditions.",
+      "what_it_catches": "Systems trained heavily on adult primary care that thin out at the long tail."
+    }
+  ],
+  "findings": [
+    {
+      "headline": "A tuned CDS prompt closes a 17-point quality gap.",
+      "body": "On the Golden suite a frontier LLM jumped from 71 to 88 with the right prompt scaffolding — landing within 2 points of a specialist clinical API at roughly one-sixth the cost. Most of the 'specialist CDS API' moat is a prompting moat."
+    },
+    {
+      "headline": "Specialist APIs are not safer. They fail differently.",
+      "body": "One specialist endpoint had 18 critical errors across 60 queries — outdated screening thresholds and contradicted treatments stated with high confidence. Specialist branding does not substitute for an evaluation harness."
+    },
+    {
+      "headline": "A local 27B model beats one frontier model on the Hard subset.",
+      "body": "Open-weights 27B running on a workstation hit 88.8 on Golden and 77% on the hallucination traps — outperforming one of the two frontier APIs at zero marginal cost and with zero PHI exposure."
+    },
+    {
+      "headline": "Most 'hallucination' is actually agreeableness.",
+      "body": "The 4B model failed 20 of 30 trap queries not because it lacked knowledge, but because it accepted false premises from the prompt. Models that refuse to disagree with the user are dangerous in CDS regardless of their parametric depth."
+    },
+    {
+      "headline": "Citation strength does not predict content quality.",
+      "body": "The system with the strongest literature citations had the highest critical-error rate. Citations are a packaging dimension, not a quality signal. They must be scored separately or they bias the rubric."
+    },
+    {
+      "headline": "Cheap judges are good enough — if you calibrate them.",
+      "body": "A small frontier judge model hit MAE 5.65 vs the gold-standard judge with r=0.77. Running graders on a $0.20 model instead of a $3 model cut evaluation cost ~15× without changing the leaderboard order."
+    }
+  ],
+  "methodology": [
+    {
+      "title": "Dual-rubric scoring",
+      "body": "Every response is scored twice: once on the full production rubric (accuracy + completeness + specificity + citations + format) and once on content-only (drop citations + format penalties). The gap between the two tells you whether a system is losing on substance or on packaging."
+    },
+    {
+      "title": "Judge calibration",
+      "body": "Judges are themselves evaluated. Each candidate judge is run against a small set scored by a frontier reference judge. Mean absolute error and Pearson r on rank-order both matter — a low MAE with low r means the cheap judge is wrong consistently, which is uncorrectable."
+    },
+    {
+      "title": "HIPAA-safe query decontextualization",
+      "body": "Queries containing PHI are routed through a small model that strips identifiers and re-expresses the clinical question before the prompt ever leaves the local environment. The CDS endpoint sees only the abstracted question. Decon quality is itself benchmarked on >1,000 sample queries."
+    },
+    {
+      "title": "Length-adjusted scoring",
+      "body": "Longer answers tend to score higher on completeness regardless of content. Wherever raw length is reward-hackable, scores are normalized to a length-adjusted variant so verbosity does not buy a system its way up the table."
+    },
+    {
+      "title": "Blinded comparisons",
+      "body": "All public reporting uses category labels rather than vendor names. Detailed vendor-attributed results are shared privately with each vendor as a regression report. This site shows the structure of the evaluation, not the decoder."
+    }
+  ],
+  "about": {
+    "name": "Michael Hobbs, MD",
+    "tagline": "Pediatrician. Builder. CDS evaluation lead at a working primary-care practice.",
+    "bio": "I run an active pediatric practice and an evaluation lab for the clinical AI we use in it. The work on this site is the framework I use to decide which systems we trust with patient care — built because the public benchmarks for clinical AI do not stress-test the failure modes that hurt real patients. Available for advisory and evaluation engagements with clinical AI teams that want a physician-led harness rather than a vendor pitch deck.",
+    "contact": {
+      "email": "michael@hobbs.md",
+      "linkedin": "https://www.linkedin.com/in/dochobbs/",
+      "github": "https://github.com/dochobbs"
+    }
+  }
+}
