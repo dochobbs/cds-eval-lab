@@ -7,51 +7,83 @@
       { "value": "1,400+", "label": "Clinical queries scored" },
       { "value": "11", "label": "Systems benchmarked" },
       { "value": "47", "label": "Critical errors caught" },
-      { "value": "6", "label": "Independent rubrics" }
+      { "value": "$1,200", "label": "Eval spend in 90 days" }
     ]
+  },
+  "scope": {
+    "what_is_here": "Single-turn clinical decision support. Each query is one prompt, one answer, one score. The system either gets it right on its own or it doesn't.",
+    "what_is_not_here": "Multi-turn dialogue benchmarks (a separate workstream called PEARL covers those — parent vignettes, clinician follow-ups, conversation budgets). Multi-turn evaluation is harder and is reported separately."
   },
   "suites": [
     {
       "code": "GOLDEN",
       "name": "Golden — Primary care core",
       "n": 60,
-      "purpose": "Standard ambulatory lookups across 23 domains. The floor every CDS system must clear.",
-      "scored_by": "Frontier LLM judge, dual-rubric (full CDS + content-only)."
+      "purpose": "Hand-curated ambulatory lookups across 23 domains. The floor every CDS system must clear.",
+      "scored_by": "Frontier LLM judge, dual rubric (full CDS + content-only).",
+      "provenance": "Hand-curated",
+      "turn_mode": "Single-turn",
+      "focus": "General primary care"
     },
     {
       "code": "FRESH",
       "name": "Freshness — Guidelines that moved",
       "n": 30,
       "purpose": "Questions whose correct answer changed in 2024–2026. Detects models living in 2023.",
-      "scored_by": "Old-answer vs new-answer binary + partial-credit rubric."
+      "scored_by": "Old-answer vs new-answer binary + partial-credit rubric.",
+      "provenance": "Hand-curated",
+      "turn_mode": "Single-turn",
+      "focus": "Currency"
     },
     {
       "code": "HALLUC",
       "name": "Hallucination — Clinical traps",
       "n": 30,
       "purpose": "Contraindications, dangerous dosing, false-premise queries. The model must push back.",
-      "scored_by": "Pass/fail by trap category, judged on whether the trap was caught."
+      "scored_by": "Pass/fail by trap category, judged on whether the trap was caught.",
+      "provenance": "Hand-curated, adversarial",
+      "turn_mode": "Single-turn",
+      "focus": "Safety floor"
     },
     {
       "code": "HALLUHARD",
       "name": "HalluHard — Fabricated entities",
       "n": 15,
       "purpose": "Invented trial names, fake scoring systems, plausible-sounding nonsense. Tests refusal vs confabulation.",
-      "scored_by": "PASS / PARTIAL / FAIL by graded refusal quality."
+      "scored_by": "PASS / PARTIAL / FAIL by graded refusal quality.",
+      "provenance": "Hand-curated, adversarial",
+      "turn_mode": "Single-turn",
+      "focus": "Safety floor"
     },
     {
       "code": "EDGE",
       "name": "Edge — Pediatric rare disease",
       "n": 15,
-      "purpose": "Wilson disease, inborn errors of metabolism, etc. Tests parametric depth past the top-100 conditions.",
-      "scored_by": "Frontier LLM judge, 5-point rubric."
+      "purpose": "Wilson disease, inborn errors of metabolism, atypical presentations. Tests parametric depth past the top-100 conditions.",
+      "scored_by": "Frontier LLM judge, 5-point rubric.",
+      "provenance": "Hand-curated",
+      "turn_mode": "Single-turn",
+      "focus": "Pediatrics, long tail"
     },
     {
-      "code": "PC136",
+      "code": "PC-136",
       "name": "PC-136 — Primary-care professional",
       "n": 136,
-      "purpose": "Adapted from a public physician-graded set. Length-adjusted scoring removes verbosity advantage.",
-      "scored_by": "Reference-rubric scoring; length-adjusted."
+      "purpose": "Adapted from HealthBench Pro (OpenAI, April 2026). Length-adjusted scoring removes the verbosity advantage frontier models trade on.",
+      "scored_by": "Reference-rubric scoring; length-adjusted ×100 to match paper methodology.",
+      "provenance": "Adapted from HealthBench Pro",
+      "turn_mode": "Single-turn",
+      "focus": "External validity"
+    },
+    {
+      "code": "PEDS-DOSE",
+      "name": "Peds Dosing — Mg/kg and contraindications",
+      "n": 25,
+      "purpose": "Six categories built to catch dose-correctness failures: 1:1000 vs 1:10,000 epinephrine, ceftriaxone in a neonate, ibuprofen under six months, hypotonic IVF, adult-dose oseltamivir in an infant.",
+      "scored_by": "Per-category pass/fail by a physician-authored rubric.",
+      "provenance": "Hand-curated",
+      "turn_mode": "Single-turn",
+      "focus": "Pediatrics, dosing safety"
     }
   ],
   "leaderboard": [
@@ -153,19 +185,57 @@
     }
   ],
   "suite_scores": {
-    "headers": ["GOLDEN", "FRESH", "HALLUC", "HALLUHARD", "EDGE"],
-    "header_format": ["/100", "/2.0", "% pass", "% pass", "/5"],
+    "headers": ["GOLDEN", "FRESH", "HALLUC", "HALLUHARD", "EDGE", "PC-136"],
+    "header_format": ["/100", "/2.0", "% pass", "% pass", "/5", "adj ×100"],
     "rows": [
-      { "system": "Specialist CDS API #1", "scores": [89.0, 1.55, 90, 60, 4.45] },
-      { "system": "Specialist CDS API #2", "scores": [78.4, 0.95, 73, 47, 3.90] },
-      { "system": "Specialist CDS API #3", "scores": [92.0, 1.70, 97, 73, 4.60] },
-      { "system": "Frontier LLM (tuned prompt)", "scores": [88.0, 1.45, 87, 67, 4.35] },
-      { "system": "Frontier LLM (raw)", "scores": [71.0, 0.85, 60, 33, 3.40] },
-      { "system": "Frontier LLM (raw, vendor B)", "scores": [74.0, 0.78, 53, 27, 3.55] },
-      { "system": "Local 27B (open weights)", "scores": [88.8, 0.93, 77, 27, 4.28] },
-      { "system": "Local 4B (open weights)", "scores": [55.0, 0.47, 33, 7, 2.67] }
+      { "system": "Specialist CDS API #1", "scores": [89.0, 1.55, 90, 60, 4.45, 33.8] },
+      { "system": "Specialist CDS API #2", "scores": [78.4, 0.95, 73, 47, 3.90, 43.1] },
+      { "system": "Specialist CDS API #3", "scores": [92.0, 1.70, 97, 73, 4.60, 51.0] },
+      { "system": "Frontier LLM (tuned prompt)", "scores": [88.0, 1.45, 87, 67, 4.35, 59.1] },
+      { "system": "Frontier LLM (raw)", "scores": [71.0, 0.85, 60, 33, 3.40, 42.7] },
+      { "system": "Frontier LLM (raw, vendor B)", "scores": [74.0, 0.78, 53, 27, 3.55, 46.3] },
+      { "system": "Local 27B (open weights)", "scores": [88.8, 0.93, 77, 27, 4.28, null] },
+      { "system": "Local 4B (open weights)", "scores": [55.0, 0.47, 33, 7, 2.67, null] }
     ]
   },
+  "timeline": [
+    {
+      "date": "Feb 2026",
+      "phase": "01 · Plumbing",
+      "title": "Wired the first three sources",
+      "body": "Built clients for a specialist MCP integration, a specialist text API, and a web-search pipeline. Discovered immediately that loading specialist articles as RAG context hurt frontier-model scores by ~6 points. The reference tool was acting as a noise injector."
+    },
+    {
+      "date": "Mar 2026",
+      "phase": "02 · First leaderboard",
+      "title": "Hand-curated the Golden 60",
+      "body": "Codified 60 queries across 23 ambulatory domains. Built the three internal suites (Golden, Freshness, Hallucination) that still anchor the harness today. The hand-curated traps caught more failure modes than any commercial benchmark."
+    },
+    {
+      "date": "Apr 2026",
+      "phase": "03 · The prompting lever",
+      "title": "Ran a 16-config sweep across sources × prompts × models",
+      "body": "Result: the system prompt was worth more than the model choice. A tuned CDS prompt lifted every frontier model by 17–20 points. The 'specialized CDS API' moat shrank to a few points and vanished entirely on some suites."
+    },
+    {
+      "date": "Apr 2026",
+      "phase": "04 · HIPAA architecture",
+      "title": "Designed a query-decontextualization layer",
+      "body": "A small model decontextualizes the clinical query before it leaves the local environment; the CDS endpoint only sees the abstracted version. Validated against >1,000 sample queries with PHI. Solves the BAA gap for vendors that won't sign one."
+    },
+    {
+      "date": "Apr 2026",
+      "phase": "05 · External validity",
+      "title": "Wired in HealthBench Pro",
+      "body": "Adapted the 136-query primary-care subset of OpenAI's HealthBench Pro as an outside-the-house benchmark. Paper-faithful methodology with length-adjusted scoring. Outcome: the leaderboard order held."
+    },
+    {
+      "date": "May 2026",
+      "phase": "06 · Pediatric coverage",
+      "title": "Built pediatric-specific suites",
+      "body": "Hand-built peds dosing traps, peds freshness probes for 2024–2026 AAP/AHA guideline shifts, and a peds hallucination set focused on fabricated criteria and citations. Pediatrics is where the rare diseases live and where my patients are."
+    }
+  ],
   "example_queries": [
     {
       "domain": "Drug safety",
@@ -208,20 +278,42 @@
       "difficulty": "edge",
       "description": "Pediatric inborn error of metabolism presenting with a common chief complaint. Tests depth past the top-100 conditions.",
       "what_it_catches": "Systems trained heavily on adult primary care that thin out at the long tail."
+    },
+    {
+      "domain": "Pediatric dosing",
+      "tag": "concentration_swap",
+      "difficulty": "trap",
+      "description": "Asks for the epinephrine dose in an anaphylaxis-equivalent scenario. The 1:1,000 vs 1:10,000 distinction is the difference between a safe IM dose and a cardiac arrest.",
+      "what_it_catches": "Models that recall the number without locking the concentration. Frontier models still miss this without a prompt that forces them to name the concentration first."
+    },
+    {
+      "domain": "Pediatric freshness",
+      "tag": "guideline_supersession",
+      "difficulty": "moved guideline",
+      "description": "RSV prophylaxis in 2025 — palivizumab has been superseded by nirsevimab in the AAP policy. The deprecated recommendation must be explicitly absent.",
+      "what_it_catches": "Models that confidently quote a 2014 recommendation that was retired last year."
     }
   ],
   "findings": [
     {
-      "headline": "A tuned CDS prompt closes a 17-point quality gap.",
-      "body": "On the Golden suite a frontier LLM jumped from 71 to 88 with the right prompt scaffolding — landing within 2 points of a specialist clinical API at roughly one-sixth the cost. Most of the 'specialist CDS API' moat is a prompting moat."
+      "headline": "The system prompt is the largest single lever.",
+      "body": "Going from a raw frontier model to the same model with a tuned CDS prompt is +17 to +20 points on the Golden suite. Cross-model differences within the same prompt are 1 to 3 points. Most of the perceived 'specialist CDS API' moat is actually a prompting moat."
     },
     {
       "headline": "Specialist APIs are not safer. They fail differently.",
       "body": "One specialist endpoint had 18 critical errors across 60 queries — outdated screening thresholds and contradicted treatments stated with high confidence. Specialist branding does not substitute for an evaluation harness."
     },
     {
+      "headline": "One web search is the best dollar you'll spend.",
+      "body": "Zero searches to one search lifts Freshness by +0.40 and Edge by +7 points. The first search is not fixing knowledge gaps — it's fixing currency and depth on hard cases. Going from one to five searches buys nothing on quality and adds hallucination failures."
+    },
+    {
+      "headline": "More retrieval lowers resistance to fabricated user premises.",
+      "body": "Counter-intuitively, more searches mean the model becomes more confident it has evidence — and more willing to play along with a false premise in the question. The 0-hallucination configurations on the trap suite use one search or none."
+    },
+    {
       "headline": "A local 27B model beats one frontier model on the Hard subset.",
-      "body": "Open-weights 27B running on a workstation hit 88.8 on Golden and 77% on the hallucination traps — outperforming one of the two frontier APIs at zero marginal cost and with zero PHI exposure."
+      "body": "Open-weights 27B running on a workstation hit 88.8 on Golden and 77% on the hallucination traps — outperforming one of the two frontier APIs at zero marginal cost and zero PHI exposure. The bottleneck shifted from 'does the model exist' to 'is the prompt right.'"
     },
     {
       "headline": "Most 'hallucination' is actually agreeableness.",
@@ -233,9 +325,27 @@
     },
     {
       "headline": "Cheap judges are good enough — if you calibrate them.",
-      "body": "A small frontier judge model hit MAE 5.65 vs the gold-standard judge with r=0.77. Running graders on a $0.20 model instead of a $3 model cut evaluation cost ~15× without changing the leaderboard order."
+      "body": "A small frontier judge model hit MAE 5.65 vs the gold-standard judge with r=0.77 rank-order correlation. Running graders on a $0.20-per-million model instead of a $3 model cut evaluation cost ~15× without changing the leaderboard order."
+    },
+    {
+      "headline": "Length-adjustment compresses the score gap between vendors.",
+      "body": "Verbose responses score higher on rubric-based judges by accidentally hitting more bullet points. Once length is held constant, the per-query gap between a tuned frontier model and a specialist API closes to 1–3 points on the public PC-136 set."
+    },
+    {
+      "headline": "Hand-curated traps caught what every commercial bench missed.",
+      "body": "The 30 false-premise queries were the cheapest safety signal in the project — a few hours of physician time, more failure modes surfaced than HealthBench Pro, golden_60, and edge_15 combined."
     }
   ],
+  "economics": {
+    "intro": "Three months of evaluation cost about $1,200. The line items are not where most teams assume.",
+    "rows": [
+      { "label": "Judge model calls (grading)", "share": 62, "note": "Every response scored by 1–2 judges across 6 suites adds up fast." },
+      { "label": "System-under-test calls (the LLMs being measured)", "share": 22, "note": "Most of the systems being tested are cheap. The verbose ones are not." },
+      { "label": "Specialist CDS API calls", "share": 11, "note": "Per-query pricing dominates if you score a full suite against them." },
+      { "label": "Retrieval and embeddings", "share": 5, "note": "Web search calls + decontextualization." }
+    ],
+    "punchline": "Cost-optimizing the system under test is the wrong axis. Cost-optimizing the judge is where the savings live."
+  },
   "methodology": [
     {
       "title": "Dual-rubric scoring",
@@ -243,19 +353,27 @@
     },
     {
       "title": "Judge calibration",
-      "body": "Judges are themselves evaluated. Each candidate judge is run against a small set scored by a frontier reference judge. Mean absolute error and Pearson r on rank-order both matter — a low MAE with low r means the cheap judge is wrong consistently, which is uncorrectable."
+      "body": "Judges are themselves evaluated. Each candidate judge is run against a small set scored by a frontier reference judge. Mean absolute error and Pearson r on rank-order both matter — a low MAE with low r means the cheap judge is wrong consistently, which is uncorrectable. The current production judge holds MAE 5.65 with r=0.77 vs the reference."
     },
     {
       "title": "HIPAA-safe query decontextualization",
-      "body": "Queries containing PHI are routed through a small model that strips identifiers and re-expresses the clinical question before the prompt ever leaves the local environment. The CDS endpoint sees only the abstracted question. Decon quality is itself benchmarked on >1,000 sample queries."
+      "body": "Queries containing PHI are routed through a small model that strips identifiers and re-expresses the clinical question before the prompt ever leaves the local environment. The CDS endpoint sees only the abstracted question. Decontextualization quality is itself benchmarked on >1,000 sample queries."
     },
     {
       "title": "Length-adjusted scoring",
-      "body": "Longer answers tend to score higher on completeness regardless of content. Wherever raw length is reward-hackable, scores are normalized to a length-adjusted variant so verbosity does not buy a system its way up the table."
+      "body": "Longer answers tend to score higher on completeness regardless of content. Wherever raw length is reward-hackable, scores are normalized to a length-adjusted variant so verbosity does not buy a system its way up the table. PC-136 uses the HealthBench Pro length-adjustment formula directly."
+    },
+    {
+      "title": "Single-turn scope",
+      "body": "This site reports single-turn results only — one prompt, one answer, one score. Multi-turn behavior (parent vignettes, clinician follow-ups, conversation budgets) is evaluated separately under a different harness called PEARL and reported elsewhere. The two are complementary and intentionally separate so a system can't trade one for the other."
     },
     {
       "title": "Blinded comparisons",
       "body": "All public reporting uses category labels rather than vendor names. Detailed vendor-attributed results are shared privately with each vendor as a regression report. This site shows the structure of the evaluation, not the decoder."
+    },
+    {
+      "title": "Hand-curated query sets",
+      "body": "Five of the seven suites are physician-authored from scratch. Adversarial suites (hallucination, halluhard) are deliberately not crowdsourced — generating effective traps requires clinical reasoning about which false premises a model will accept. PC-136 is the one exception and is sourced from a published benchmark for external validity."
     }
   ],
   "about": {

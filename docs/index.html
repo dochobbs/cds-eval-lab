@@ -10,7 +10,7 @@
   <meta property="og:type" content="website" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;1,9..144,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Geist:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230a0a0b'/%3E%3Ctext x='50%25' y='58%25' font-family='monospace' font-size='18' font-weight='600' fill='%2300d4ff' text-anchor='middle' dominant-baseline='middle'%3EC%3C/text%3E%3C/svg%3E" />
   <link rel="stylesheet" href="assets/styles.css" />
 </head>
@@ -23,6 +23,8 @@
       <li><a href="#suites">Suites</a></li>
       <li><a href="#queries">Queries</a></li>
       <li><a href="#leaderboard">Leaderboard</a></li>
+      <li><a href="#timeline">Evolution</a></li>
+      <li><a href="#economics">Economics</a></li>
       <li><a href="#findings">Findings</a></li>
       <li><a href="#method">Method</a></li>
       <li><a href="#about">About</a></li>
@@ -35,9 +37,10 @@
     <div class="eyebrow">Clinical Decision Support · Independent Evaluation</div>
     <h1>I measure whether clinical AI is <em>actually safe</em> to put in front of patients.</h1>
     <p class="sub">
-      A physician-built harness across six benchmark suites and eleven systems —
-      specialist CDS APIs, frontier LLMs, and local open-weights models. Blinded
-      results, real failure modes, no vendor decks.
+      A physician-built harness — seven benchmark suites, eleven systems, fourteen
+      hundred scored queries. Hand-curated traps, blinded results, real failure
+      modes. Built and run from a working pediatric practice over the last fifteen
+      months.
     </p>
     <div class="statgrid" id="statgrid"></div>
   </div>
@@ -66,11 +69,32 @@
   </div>
 </section>
 
+<section id="scope" class="tight">
+  <div class="container">
+    <div class="scope-grid">
+      <div class="scope">
+        <div class="bar"></div>
+        <div>
+          <div class="lbl">In scope on this site</div>
+          <p id="scope-in"></p>
+        </div>
+      </div>
+      <div class="scope out">
+        <div class="bar"></div>
+        <div>
+          <div class="lbl">Reported separately</div>
+          <p id="scope-out"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section id="suites">
   <div class="container">
     <div class="section-head">
       <span class="num">02</span>
-      <h2>The benchmark stack</h2>
+      <h2>The benchmark stack — <em>seven hand-curated suites</em></h2>
     </div>
     <div class="suites" id="suite-list"></div>
   </div>
@@ -130,10 +154,32 @@
   </div>
 </section>
 
-<section id="findings">
+<section id="timeline">
   <div class="container">
     <div class="section-head">
       <span class="num">05</span>
+      <h2>How the harness evolved — <em>a year of iteration</em></h2>
+    </div>
+    <div class="timeline" id="timeline-list"></div>
+  </div>
+</section>
+
+<section id="economics">
+  <div class="container">
+    <div class="section-head">
+      <span class="num">06</span>
+      <h2>Where the eval budget actually goes</h2>
+    </div>
+    <p class="econ-intro" id="econ-intro"></p>
+    <div class="econ-rows" id="econ-rows"></div>
+    <p class="econ-punchline" id="econ-punchline"></p>
+  </div>
+</section>
+
+<section id="findings">
+  <div class="container">
+    <div class="section-head">
+      <span class="num">07</span>
       <h2>What the evaluations actually showed</h2>
     </div>
     <div class="findings" id="findings-grid"></div>
@@ -143,7 +189,7 @@
 <section id="method">
   <div class="container">
     <div class="section-head">
-      <span class="num">06</span>
+      <span class="num">08</span>
       <h2>Methodology</h2>
     </div>
     <div class="method-list" id="method-list"></div>

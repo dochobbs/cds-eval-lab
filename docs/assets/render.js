@@ -1,6 +1,4 @@
-// CDS Eval Lab — render site from data.json
-// All values are escaped before insertion. data.json is author-controlled,
-// but escaping keeps the surface trivially safe if anyone forks this.
+// CDS Eval Lab — render site from data.json. All values escaped before insertion.
 
 (async function () {
   const esc = s => String(s).replace(/[&<>"']/g, c => ({
@@ -9,9 +7,16 @@
 
   const res = await fetch("assets/data.json");
   const data = await res.json();
+  const setHTML = (id, html) => {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = html;
+  };
+  const setText = (id, t) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = t;
+  };
 
-  const setHTML = (id, html) => { document.getElementById(id).innerHTML = html; };
-
+  // Hero stats
   setHTML("statgrid", data.lab.summary_stats.map(s => `
     <div class="stat">
       <div class="v">${esc(s.value)}</div>
@@ -19,18 +24,38 @@
     </div>
   `).join(""));
 
-  setHTML("suite-list", data.suites.map(s => `
-    <div class="suite-row">
-      <div class="code">${esc(s.code)}</div>
-      <div>
-        <div class="name">${esc(s.name)}</div>
-        <div class="purpose">${esc(s.purpose)}</div>
-        <div class="scored">SCORED BY · ${esc(s.scored_by)}</div>
-      </div>
-      <div class="n">${esc(s.n)}<span class="lbl">queries</span></div>
-    </div>
-  `).join(""));
+  // Scope callouts
+  setText("scope-in", data.scope.what_is_here);
+  setText("scope-out", data.scope.what_is_not_here);
 
+  // Suites — with provenance and turn tags
+  const suiteTagClass = label => {
+    const l = label.toLowerCase();
+    if (l.includes("peds") || l.includes("pediat")) return "peds";
+    if (l.includes("adapted") || l.includes("adversarial")) return "hot";
+    return "";
+  };
+  setHTML("suite-list", data.suites.map(s => {
+    const tags = [s.provenance, s.turn_mode, s.focus].filter(Boolean);
+    return `
+      <div class="suite-row">
+        <div>
+          <div class="code">${esc(s.code)}</div>
+          <div class="tags">
+            ${tags.map(t => `<span class="tag ${suiteTagClass(t)}">${esc(t)}</span>`).join("")}
+          </div>
+        </div>
+        <div>
+          <div class="name">${esc(s.name)}</div>
+          <div class="purpose">${esc(s.purpose)}</div>
+          <div class="scored">SCORED BY · ${esc(s.scored_by)}</div>
+        </div>
+        <div class="n">${esc(s.n)}<span class="lbl">queries</span></div>
+      </div>
+    `;
+  }).join(""));
+
+  // Example queries
   setHTML("query-grid", data.example_queries.map(q => `
     <div class="query-card">
       <div class="meta">
@@ -71,7 +96,10 @@
   const headers = data.suite_scores.headers;
   const fmts = data.suite_scores.header_format;
   const rows = data.suite_scores.rows;
-  const maxByCol = headers.map((_, i) => Math.max(...rows.map(r => r.scores[i])));
+  const maxByCol = headers.map((_, i) => {
+    const vals = rows.map(r => r.scores[i]).filter(v => v != null);
+    return vals.length ? Math.max(...vals) : 1;
+  });
   setHTML("suite-table", `
     <table>
       <thead>
@@ -86,6 +114,7 @@
           <tr>
             <td>${esc(r.system)}</td>
             ${r.scores.map((v, i) => {
+              if (v == null) return `<td><span style="color:var(--text-faint)">—</span></td>`;
               const pct = (v / maxByCol[i]) * 100;
               const w = Math.max(8, pct * 0.6).toFixed(0);
               return `<td><span class="bar" style="width:${w}px"></span>${esc(v)}</td>`;
@@ -96,6 +125,33 @@
     </table>
   `);
 
+  // Timeline
+  setHTML("timeline-list", data.timeline.map(t => `
+    <div class="tl-item">
+      <div class="date">${esc(t.date)}</div>
+      <div class="phase">${esc(t.phase)}</div>
+      <h3>${esc(t.title)}</h3>
+      <p>${esc(t.body)}</p>
+    </div>
+  `).join(""));
+
+  // Economics
+  if (data.economics) {
+    setText("econ-intro", data.economics.intro);
+    setHTML("econ-rows", data.economics.rows.map(r => `
+      <div class="econ-row">
+        <div>
+          <div class="label">${esc(r.label)}</div>
+          <p class="note">${esc(r.note)}</p>
+        </div>
+        <div class="share">${esc(r.share)}<span class="pct">%</span></div>
+        <div class="meter"><div class="fill" style="width:${esc(r.share)}%"></div></div>
+      </div>
+    `).join(""));
+    setText("econ-punchline", data.economics.punchline);
+  }
+
+  // Findings
   setHTML("findings-grid", data.findings.map((f, i) => `
     <div class="finding">
       <div class="num">FINDING ${String(i + 1).padStart(2, "0")}</div>
@@ -104,6 +160,7 @@
     </div>
   `).join(""));
 
+  // Methodology
   setHTML("method-list", data.methodology.map(m => `
     <details class="method">
       <summary>${esc(m.title)}</summary>
@@ -111,6 +168,7 @@
     </details>
   `).join(""));
 
+  // About
   document.getElementById("about-tagline").textContent = data.about.tagline;
   document.getElementById("about-bio").textContent = data.about.bio;
   const emailA = document.getElementById("contact-email");
