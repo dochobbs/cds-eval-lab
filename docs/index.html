@@ -3,155 +3,155 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>CDS Eval Lab — Michael Hobbs, MD</title>
-  <meta name="description" content="A physician-built evaluation harness for clinical decision-support AI. Blinded leaderboards, hallucination traps, freshness probes, and a working methodology." />
+  <title>CDS Eval Lab · Michael Hobbs, MD</title>
+  <meta name="description" content="A physician-built evaluation harness for clinical decision-support AI. Blinded leaderboards, hallucination traps, freshness probes, and the methodology behind them." />
   <meta property="og:title" content="CDS Eval Lab" />
-  <meta property="og:description" content="A physician-built evaluation harness for clinical AI. Blinded results across 11 systems, 1,400+ queries, 6 rubrics." />
+  <meta property="og:description" content="A physician-built evaluation harness for clinical AI. Eleven systems, six rubrics, blinded results." />
   <meta property="og:type" content="website" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23f6f1e6'/%3E%3Ctext x='50%25' y='62%25' font-family='Georgia,serif' font-size='22' font-style='italic' fill='%231a1714' text-anchor='middle' dominant-baseline='middle'%3Ec%3C/text%3E%3C/svg%3E" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;1,9..144,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230a0a0b'/%3E%3Ctext x='50%25' y='58%25' font-family='monospace' font-size='18' font-weight='600' fill='%2300d4ff' text-anchor='middle' dominant-baseline='middle'%3EC%3C/text%3E%3C/svg%3E" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400;1,9..144,500&family=Inter:wght@400;500&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;1,8..60,400&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="assets/styles.css" />
 </head>
 <body>
 
-<nav class="top">
-  <div class="container">
-    <div class="brand">CDS Eval Lab<span class="dot">.</span></div>
-    <ul>
-      <li><a href="#suites">Suites</a></li>
-      <li><a href="#queries">Queries</a></li>
-      <li><a href="#leaderboard">Leaderboard</a></li>
-      <li><a href="#findings">Findings</a></li>
-      <li><a href="#method">Method</a></li>
-      <li><a href="#about">About</a></li>
-    </ul>
+<div class="masthead">
+  <div class="row">
+    <div class="title">CDS Eval Lab</div>
+    <div class="meta">
+      <a href="#suites">Suites</a>
+      <a href="#queries">Queries</a>
+      <a href="#leaderboard">Leaderboard</a>
+      <a href="#findings">Findings</a>
+      <a href="#about">About</a>
+    </div>
   </div>
-</nav>
+</div>
 
-<header class="hero">
-  <div class="container">
-    <div class="eyebrow">Clinical Decision Support · Independent Evaluation</div>
-    <h1>I measure whether clinical AI is <em>actually safe</em> to put in front of patients.</h1>
-    <p class="sub">
-      A physician-built harness across six benchmark suites and eleven systems —
-      specialist CDS APIs, frontier LLMs, and local open-weights models. Blinded
-      results, real failure modes, no vendor decks.
+<header class="lede">
+  <div class="col">
+    <h1>Measuring whether clinical AI is <em>actually safe</em> to put in front of patients.</h1>
+    <p class="standfirst">
+      An independent evaluation lab run by a working pediatrician. Six benchmark
+      suites, eleven systems, fourteen hundred scored queries, one stubborn
+      question: which of these is fit to see a sick child?
     </p>
-    <div class="statgrid" id="statgrid"></div>
+    <div class="byline">
+      <div>
+        <strong>Michael Hobbs, MD</strong>
+        Pediatrician, Lakes Pediatrics
+      </div>
+      <div>
+        <strong>Status</strong>
+        Active · Quarterly re-evaluation
+      </div>
+      <div>
+        <strong>Scope</strong>
+        Ambulatory primary care
+      </div>
+    </div>
   </div>
 </header>
 
-<section id="dimensions" class="tight">
-  <div class="container">
-    <div class="section-head">
-      <span class="num">01</span>
-      <h2>What I evaluate</h2>
-    </div>
-    <div class="cards c3">
-      <div class="card">
-        <h3>Clinical content quality</h3>
-        <p>Accuracy, completeness, and specificity scored on production-relevant primary-care queries. Dual rubric: full CDS and content-only, so packaging can't carry the score.</p>
-      </div>
-      <div class="card">
-        <h3>Hallucination safety</h3>
-        <p>Two separate suites — known clinical traps (contraindicated drugs, dangerous doses, false premises) and fabricated entities (invented trial names, fake guidelines). Pass rates, not just averages.</p>
-      </div>
-      <div class="card">
-        <h3>Freshness</h3>
-        <p>Thirty queries whose correct answer changed in the last 24 months. Tests parametric staleness in models without retrieval and stale retrieval in models with it.</p>
-      </div>
-    </div>
+<section id="dimensions">
+  <div class="col">
+    <p class="kicker">What this lab measures</p>
+    <h2 class="head">Three things matter at the point of care, and they have to be measured separately.</h2>
+    <p class="intro">
+      Clinical AI benchmarks tend to collapse into one number, which obscures the
+      failure modes a clinician actually cares about. The harness here keeps three
+      dimensions apart so a system can't trade one for another and look fine on
+      average.
+    </p>
+    <p>
+      The first is <em>content quality</em> — accuracy, completeness, and
+      specificity scored on real ambulatory queries. The second is
+      <em>hallucination safety</em>, split into two distinct probes: known clinical
+      traps (a beta-lactam allergy paired with a request to dose a beta-lactam) and
+      fabricated entities (an invented trial name in a plausible-sounding query).
+      The third is <em>freshness</em>, which asks whether the system knows what
+      changed in the guidelines this year.
+    </p>
+    <p>
+      A system that scores 90 on content but caves to false premises is not safer
+      than one that scores 75 and refuses to be wrong. The leaderboard further down
+      makes that visible.
+    </p>
   </div>
 </section>
 
 <section id="suites">
-  <div class="container">
-    <div class="section-head">
-      <span class="num">02</span>
-      <h2>The benchmark stack</h2>
-    </div>
+  <div class="col">
+    <p class="kicker">The benchmark stack</p>
+    <h2 class="head">Six suites, scored independently, weighted by the kind of mistake each one catches.</h2>
     <div class="suites" id="suite-list"></div>
   </div>
 </section>
 
 <section id="queries">
-  <div class="container">
-    <div class="section-head">
-      <span class="num">03</span>
-      <h2>Example queries</h2>
-    </div>
-    <p style="max-width:720px; color:var(--text-dim); margin:0 0 36px;">
-      Sanitized for public release — exact prompt text stays in the harness so vendors can't train against it. What follows is the
-      <em>shape</em> of each probe and the failure mode it's designed to surface.
-    </p>
-    <div class="query-grid" id="query-grid"></div>
+  <div class="col">
+    <p class="kicker">A handful of the queries</p>
+    <h2 class="head">Sanitized for public release. Exact prompts stay in the harness so they're not trained against.</h2>
+    <div class="queries" id="query-list"></div>
   </div>
 </section>
 
 <section id="leaderboard">
-  <div class="container">
-    <div class="section-head">
-      <span class="num">04</span>
-      <h2>Blinded leaderboard</h2>
-    </div>
-    <p style="max-width:720px; color:var(--text-dim); margin:0 0 36px;">
-      Eight systems, scored on the Golden suite with the production rubric.
-      Vendor identities are withheld; categories are accurate.
-      Detailed vendor-attributed reports are shared privately with each team.
+  <div class="wide">
+    <p class="kicker">Blinded leaderboard</p>
+    <h2 class="head">Eight systems on the Golden suite, identities withheld, categories accurate.</h2>
+    <p class="intro" style="max-width: 720px;">
+      Vendor-attributed results go to each vendor privately as a regression report.
+      Below is the shape of the field: specialist clinical APIs, frontier language
+      models with and without a tuned prompt, and open-weights models running
+      locally on a workstation.
     </p>
     <div class="lb-wrap">
       <table class="lb">
+        <caption>Table 1. Golden suite. Critical errors counted out of 60 queries. Sorted by content-dimension total.</caption>
         <thead>
           <tr>
             <th>System</th>
-            <th class="num">Accuracy</th>
-            <th class="num">Compl.</th>
-            <th class="num">Specificity</th>
-            <th class="num">Citations</th>
-            <th class="num">Critical err.</th>
-            <th class="num">Latency</th>
-            <th class="num">$ / query</th>
+            <th>Accuracy</th>
+            <th>Compl.</th>
+            <th>Specificity</th>
+            <th>Citations</th>
+            <th>Critical err.</th>
+            <th>Latency</th>
+            <th>$ / query</th>
           </tr>
         </thead>
         <tbody id="lb-body"></tbody>
       </table>
     </div>
-    <div class="lb-note">All values 0–100 unless marked. Critical errors out of 60 queries. Sorted by content-dimension total.</div>
 
-    <div style="margin-top:64px;">
-      <div class="section-head" style="margin-bottom:24px;">
-        <span class="num">04 · b</span>
-        <h2 style="font-size:24px;">Per-suite breakdown</h2>
-      </div>
+    <div style="margin-top: 72px;">
+      <p class="kicker">By suite</p>
+      <h2 class="head" style="font-size: 28px; margin-bottom: 16px;">How each system holds up across the rest of the stack.</h2>
       <div class="suite-table" id="suite-table"></div>
     </div>
   </div>
 </section>
 
 <section id="findings">
-  <div class="container">
-    <div class="section-head">
-      <span class="num">05</span>
-      <h2>What the evaluations actually showed</h2>
-    </div>
+  <div class="col">
+    <p class="kicker">What the evaluations actually showed</p>
+    <h2 class="head">Six things the data made plain, in the order they surprised me.</h2>
     <div class="findings" id="findings-grid"></div>
   </div>
 </section>
 
 <section id="method">
-  <div class="container">
-    <div class="section-head">
-      <span class="num">06</span>
-      <h2>Methodology</h2>
-    </div>
+  <div class="col">
+    <p class="kicker">Methodology</p>
+    <h2 class="head">How the harness is built. The interesting parts are the boring parts.</h2>
     <div class="method-list" id="method-list"></div>
   </div>
 </section>
 
 <section id="about" class="about">
-  <div class="container">
+  <div class="col">
     <div class="who">About the operator</div>
     <h2 id="about-tagline"></h2>
     <p id="about-bio"></p>
@@ -159,9 +159,9 @@
 </section>
 
 <footer>
-  <div class="container">
-    <div class="brand">CDS Eval Lab · Michael Hobbs, MD</div>
-    <div class="links">
+  <div class="row">
+    <div class="col-name">CDS Eval Lab · Michael Hobbs, MD</div>
+    <div>
       <a id="contact-email" href="">email</a>
       <a id="contact-linkedin" href="" target="_blank" rel="noopener">linkedin</a>
       <a id="contact-github" href="" target="_blank" rel="noopener">github</a>

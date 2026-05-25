@@ -1,6 +1,5 @@
 // CDS Eval Lab — render site from data.json
-// All values are escaped before insertion. data.json is author-controlled,
-// but escaping keeps the surface trivially safe if anyone forks this.
+// All values escaped before insertion.
 
 (async function () {
   const esc = s => String(s).replace(/[&<>"']/g, c => ({
@@ -9,38 +8,35 @@
 
   const res = await fetch("assets/data.json");
   const data = await res.json();
+  const setHTML = (id, html) => {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = html;
+  };
 
-  const setHTML = (id, html) => { document.getElementById(id).innerHTML = html; };
-
-  setHTML("statgrid", data.lab.summary_stats.map(s => `
-    <div class="stat">
-      <div class="v">${esc(s.value)}</div>
-      <div class="l">${esc(s.label)}</div>
-    </div>
-  `).join(""));
-
+  // Suites
   setHTML("suite-list", data.suites.map(s => `
     <div class="suite-row">
       <div class="code">${esc(s.code)}</div>
       <div>
         <div class="name">${esc(s.name)}</div>
         <div class="purpose">${esc(s.purpose)}</div>
-        <div class="scored">SCORED BY · ${esc(s.scored_by)}</div>
+        <div class="scored">Scored by ${esc(s.scored_by)}</div>
       </div>
       <div class="n">${esc(s.n)}<span class="lbl">queries</span></div>
     </div>
   `).join(""));
 
-  setHTML("query-grid", data.example_queries.map(q => `
-    <div class="query-card">
-      <div class="meta">
-        <span class="domain">${esc(q.domain)}</span>
-        <span class="sep">·</span>
-        <span class="tag">${esc(q.tag)}</span>
-        <span class="tag">${esc(q.difficulty)}</span>
+  // Example queries as numbered editorial blocks
+  setHTML("query-list", data.example_queries.map(q => `
+    <div class="query-block">
+      <div class="body">
+        <div class="meta"><b>${esc(q.domain)}</b> &nbsp; ${esc(q.tag)} &nbsp; · &nbsp; ${esc(q.difficulty)}</div>
+        <p>${esc(q.description)}</p>
       </div>
-      <p class="desc">${esc(q.description)}</p>
-      <div class="catches">${esc(q.what_it_catches)}</div>
+      <div class="aside">
+        <span class="label">What it catches</span>
+        ${esc(q.what_it_catches)}
+      </div>
     </div>
   `).join(""));
 
@@ -49,21 +45,21 @@
     (b.accuracy + b.completeness + b.specificity) -
     (a.accuracy + a.completeness + a.specificity)
   );
-  const ceClass = ce => ce === 0 ? "good" : ce <= 5 ? "" : ce <= 10 ? "warn" : "bad";
-  const fmtCost = c => c === 0 ? "$0.00" : "$" + c.toFixed(c < 0.1 ? 3 : 2);
+  const ceTone = ce => ce === 0 ? "good" : ce >= 10 ? "bad" : "";
+  const fmtCost = c => c === 0 ? "—" : "$" + c.toFixed(c < 0.1 ? 3 : 2);
   setHTML("lb-body", sortedLb.map(r => `
     <tr>
       <td>
         <div class="system">${esc(r.system)}</div>
         <span class="cat">${esc(r.category)}</span>
       </td>
-      <td class="num">${esc(r.accuracy)}</td>
-      <td class="num">${esc(r.completeness)}</td>
-      <td class="num">${esc(r.specificity)}</td>
-      <td class="num">${esc(r.citations)}</td>
-      <td class="num ${ceClass(r.critical_errors)}">${esc(r.critical_errors)}</td>
-      <td class="num">${esc(r.latency_s)}s</td>
-      <td class="num">${esc(fmtCost(r.cost_per_q_usd))}</td>
+      <td>${esc(r.accuracy)}</td>
+      <td>${esc(r.completeness)}</td>
+      <td>${esc(r.specificity)}</td>
+      <td>${esc(r.citations)}</td>
+      <td><span class="${ceTone(r.critical_errors)}">${esc(r.critical_errors)}</span></td>
+      <td>${esc(r.latency_s)}s</td>
+      <td>${esc(fmtCost(r.cost_per_q_usd))}</td>
     </tr>
   `).join(""));
 
@@ -71,7 +67,6 @@
   const headers = data.suite_scores.headers;
   const fmts = data.suite_scores.header_format;
   const rows = data.suite_scores.rows;
-  const maxByCol = headers.map((_, i) => Math.max(...rows.map(r => r.scores[i])));
   setHTML("suite-table", `
     <table>
       <thead>
@@ -85,22 +80,19 @@
         ${rows.map(r => `
           <tr>
             <td>${esc(r.system)}</td>
-            ${r.scores.map((v, i) => {
-              const pct = (v / maxByCol[i]) * 100;
-              const w = Math.max(8, pct * 0.6).toFixed(0);
-              return `<td><span class="bar" style="width:${w}px"></span>${esc(v)}</td>`;
-            }).join("")}
+            ${r.scores.map(v => `<td>${esc(v)}</td>`).join("")}
           </tr>
         `).join("")}
       </tbody>
     </table>
   `);
 
-  setHTML("findings-grid", data.findings.map((f, i) => `
+  setHTML("findings-grid", data.findings.map(f => `
     <div class="finding">
-      <div class="num">FINDING ${String(i + 1).padStart(2, "0")}</div>
-      <h3>${esc(f.headline)}</h3>
-      <p>${esc(f.body)}</p>
+      <div>
+        <h3>${esc(f.headline)}</h3>
+        <p>${esc(f.body)}</p>
+      </div>
     </div>
   `).join(""));
 
