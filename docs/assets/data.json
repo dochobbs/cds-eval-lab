@@ -7,7 +7,7 @@
       { "value": "1,400+", "label": "Clinical queries scored" },
       { "value": "11", "label": "Systems benchmarked" },
       { "value": "47", "label": "Critical errors caught" },
-      { "value": "$1,200", "label": "Eval spend in 90 days" }
+      { "value": "$1k · 330M tok", "label": "Eval spend in 90 days" }
     ]
   },
   "scope": {
@@ -206,36 +206,57 @@
       "body": "Built clients for a specialist MCP integration, a specialist text API, and a web-search pipeline. Discovered immediately that loading specialist articles as RAG context hurt frontier-model scores by ~6 points. The reference tool was acting as a noise injector."
     },
     {
+      "date": "Feb 2026",
+      "phase": "01b · Sprint",
+      "title": "Twenty-four eval runs in a single twelve-hour window",
+      "body": "Single-day iteration session that produced the first canonical 60-query baseline (85.1) and the first vendor head-to-head. The discipline that survives: reconstruct exact samples, don't approximate, and never report a number whose source file you can't open."
+    },
+    {
       "date": "Mar 2026",
       "phase": "02 · First leaderboard",
       "title": "Hand-curated the Golden 60",
       "body": "Codified 60 queries across 23 ambulatory domains. Built the three internal suites (Golden, Freshness, Hallucination) that still anchor the harness today. The hand-curated traps caught more failure modes than any commercial benchmark."
     },
     {
-      "date": "Apr 2026",
-      "phase": "03 · The prompting lever",
-      "title": "Ran a 16-config sweep across sources × prompts × models",
-      "body": "Result: the system prompt was worth more than the model choice. A tuned CDS prompt lifted every frontier model by 17–20 points. The 'specialized CDS API' moat shrank to a few points and vanished entirely on some suites."
+      "date": "Mar – Apr 2026",
+      "phase": "03 · Prompt plateau",
+      "title": "Sixteen prompt rounds, plateaued at ~85, then a 17-point lift on a single rewrite",
+      "body": "Sixteen numbered iterations sat within ±1.5 points of each other. Then a structured-template prompt with explicit guideline-version citation requirements lifted every frontier model 17–20 points and zeroed out hallucination fails. The prompt is the largest single lever in the stack."
+    },
+    {
+      "date": "Apr 3 2026",
+      "phase": "04 · The judge overhaul",
+      "title": "When a 29-point variance became 6",
+      "body": "A single trap query had been swinging 29 points between identical judge calls at temperature 1.0. Switching to median-of-3 at temperature 0.3, with anti-anchoring and date-awareness, dropped the spread to 0–6. The cost: every pre-overhaul score was now unreliable. We re-baselined from scratch."
+    },
+    {
+      "date": "Apr 5 2026",
+      "phase": "05 · Physician 0/10",
+      "title": "A blinded physician review inverted the leaderboard",
+      "body": "Ten queries, four systems, blind ranking. The prompt-tuned frontier model the automated judge had ranked at the top won zero. The discrepancy was freshness — fluent answers built on the prior year's guidelines. LLM-as-judge became a screening tool from that day forward, not ground truth."
     },
     {
       "date": "Apr 2026",
-      "phase": "04 · HIPAA architecture",
+      "phase": "06 · HIPAA architecture",
       "title": "Designed a query-decontextualization layer",
-      "body": "A small model decontextualizes the clinical query before it leaves the local environment; the CDS endpoint only sees the abstracted version. Validated against >1,000 sample queries with PHI. Solves the BAA gap for vendors that won't sign one."
+      "body": "A small model decontextualizes the clinical query before it leaves the local environment; the CDS endpoint only sees the abstracted version. Validated against 132 adversarial PHI stress tests with 131 passing. Solves the BAA gap for vendors that won't sign one — and accidentally lifts freshness by appending currency terms to every search."
     },
     {
       "date": "Apr 2026",
-      "phase": "05 · External validity",
+      "phase": "07 · External validity",
       "title": "Wired in HealthBench Pro",
       "body": "Adapted the 136-query primary-care subset of OpenAI's HealthBench Pro as an outside-the-house benchmark. Paper-faithful methodology with length-adjusted scoring. Outcome: the leaderboard order held."
     },
     {
       "date": "May 2026",
-      "phase": "06 · Pediatric coverage",
+      "phase": "08 · Pediatric coverage",
       "title": "Built pediatric-specific suites",
       "body": "Hand-built peds dosing traps, peds freshness probes for 2024–2026 AAP/AHA guideline shifts, and a peds hallucination set focused on fabricated criteria and citations. Pediatrics is where the rare diseases live and where my patients are."
     }
   ],
+  "timeline_meta": {
+    "framing": "The four hinges of the work were the prompt rewrite (Phase 3), the judge overhaul (Phase 4), the physician review (Phase 5), and the HealthBench Pro replication (Phase 7). Every other finding sits downstream of one of those four moments."
+  },
   "example_queries": [
     {
       "domain": "Drug safety",
@@ -334,10 +355,44 @@
     {
       "headline": "Hand-curated traps caught what every commercial bench missed.",
       "body": "The 30 false-premise queries were the cheapest safety signal in the project — a few hours of physician time, more failure modes surfaced than HealthBench Pro, golden_60, and edge_15 combined."
+    },
+    {
+      "headline": "The score depends on the rubric, not the model.",
+      "body": "The same response from one of the systems we evaluated scored 92 on an internal clinical-quality rubric and 26 on a length-adjusted public benchmark. A 65-point gap on identical text. Any CDS leaderboard that doesn't publish the rubric alongside the number is not actually interpretable."
+    },
+    {
+      "headline": "Within-family judges agree better than cross-vendor ones.",
+      "body": "Six cheap-judge candidates from four model families. The only one that tracked the production reference judge was the small model from the same family. Cross-vendor candidates at the same price tier clustered near r=0.2 — wrong consistently, which is uncorrectable. Pick judges from the reference family, not just the cheaper price point."
+    },
+    {
+      "headline": "Coefficient of variation is the safety signal, not the mean.",
+      "body": "Two specialist APIs had similar headline scores but stdev 7 vs stdev 21. The lower-mean system was the safer system because its worst-case answer was 56/100; the higher-mean system's worst-case was 1/100. 'Consistent good' beats 'occasionally great with catastrophic floors' every time in clinical use."
+    }
+  ],
+  "methodology_contributions": [
+    {
+      "title": "Dual-rubric scoring across registers",
+      "body": "Same clinical condition, scored twice: once on a parent-vignette rubric (lay-language narrative, family-counseling criteria) and once on a clinician-query rubric (focused workup, dose-correctness, citation accuracy). A representative response landed at 95% on one rubric and 69% on the other — pure methodology artifact. A real CDS tool serves both registers; single-axis evaluation under-measures."
+    },
+    {
+      "title": "The judge calibration protocol",
+      "body": "Median-of-three calls at temperature 0.3, with anti-anchoring instructions and date-awareness baked into the prompt. New candidate judges run against a 20-case × 3-run calibration set vs the reference judge; MAE and Pearson r on rank-order both tracked. Across four candidate judges on 62 criteria, inter-judge agreement hit 93.5% — a floor worth measuring before publishing any single-judge score."
+    },
+    {
+      "title": "The blinded-comparator design",
+      "body": "When publishing comparisons that include both an open tool and a commercial system, name the open default and blind the commercial alternatives as Source A / Source B / etc. Brand recognition shouldn't tilt the comparison; the right choice is the one that fits the workflow. A middle path between 'name everyone' (commercially loaded) and 'blind everyone' (uninterpretable)."
+    },
+    {
+      "title": "Adversarial freshness + hallucination as the cheapest safety signal",
+      "body": "Hand-built two adversarial suites: thirty guideline-changed-in-the-last-twelve-months freshness probes with old-answer/new-answer ground truth, and thirty false-premise traps that bait fabricated citations. A few hours each to build. More failure modes surfaced than the largest commercial bench combined."
+    },
+    {
+      "title": "The sixty-second-timeout cautionary tale",
+      "body": "For two months one specialist endpoint had an apparent 9% timeout rate. Re-running with a 180-second client timeout recovered 23 of 23 timeouts (mean 85s, max 122s). The vendor's true error rate was zero. Before publishing any vendor-reliability comparison, double the longest reasonable timeout and re-run anything flagged. A long latency tail is not a failure rate."
     }
   ],
   "economics": {
-    "intro": "Three months of evaluation cost about $1,200. The line items are not where most teams assume.",
+    "intro": "Three months of evaluation cost about one thousand dollars across roughly three hundred and thirty million tokens. The line items are not where most teams assume.",
     "rows": [
       { "label": "Judge model calls (grading)", "share": 62, "note": "Every response scored by 1–2 judges across 6 suites adds up fast." },
       { "label": "System-under-test calls (the LLMs being measured)", "share": 22, "note": "Most of the systems being tested are cheap. The verbose ones are not." },
@@ -379,7 +434,7 @@
   "about": {
     "name": "Michael Hobbs, MD",
     "tagline": "Pediatrician. Builder. CDS evaluation lead at a working primary-care practice.",
-    "bio": "I run an active pediatric practice and an evaluation lab for the clinical AI we use in it. The work on this site is the framework I use to decide which systems we trust with patient care — built because the public benchmarks for clinical AI do not stress-test the failure modes that hurt real patients. Available for advisory and evaluation engagements with clinical AI teams that want a physician-led harness rather than a vendor pitch deck.",
+    "bio": "I run an active pediatric practice and an evaluation lab for the clinical AI we use in it. My daily clinical thought-partner is a fifteen-thousand-character prompt I have been growing empirically over a year of patient care; everything on this site grew out of trying to evaluate that prompt and the systems it competes with. Three months of work — roughly one thousand dollars of API spend and three hundred and thirty million tokens — built the harness, the methodology, and the leaderboard above. The reason for it is simple: the public benchmarks for clinical AI do not stress-test the failure modes that hurt real patients. Available for advisory and evaluation engagements with clinical AI teams that want a physician-led harness rather than a vendor pitch deck.",
     "contact": {
       "email": "michael@hobbs.md",
       "linkedin": "https://www.linkedin.com/in/dochobbs/",

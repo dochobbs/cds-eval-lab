@@ -134,6 +134,27 @@
       <p>${esc(t.body)}</p>
     </div>
   `).join(""));
+  if (data.timeline_meta && data.timeline_meta.framing) {
+    setHTML("timeline-framing", `
+      <div class="framing">
+        <span class="lbl">The four hinges</span>
+        <p>${esc(data.timeline_meta.framing)}</p>
+      </div>
+    `);
+  }
+
+  // Methodology contributions
+  if (data.methodology_contributions) {
+    setHTML("contributions-list", data.methodology_contributions.map((c, i) => `
+      <div class="contribution">
+        <div class="num">PATTERN ${String(i + 1).padStart(2, "0")}</div>
+        <div class="body">
+          <h3>${esc(c.title)}</h3>
+          <p>${esc(c.body)}</p>
+        </div>
+      </div>
+    `).join(""));
+  }
 
   // Economics
   if (data.economics) {
