@@ -591,8 +591,8 @@
   ],
   "about": {
     "name": "Michael Hobbs, MD",
-    "tagline": "Pediatrician. Builder. CDS evaluation lead at a working primary-care practice.",
-    "bio": "I run an active pediatric practice and an evaluation lab for the clinical AI we use in it. My daily clinical thought-partner is a fifteen-thousand-character prompt I have been growing empirically over a year of patient care; everything on this site grew out of trying to evaluate that prompt and the systems it competes with. Three months of work — roughly one thousand dollars of API spend and three hundred and thirty million tokens — built the harness, the methodology, and the leaderboard above. The reason for it is simple: the public benchmarks for clinical AI do not stress-test the failure modes that hurt real patients. Available for advisory and evaluation engagements with clinical AI teams that want a physician-led harness rather than a vendor pitch deck.",
+    "tagline": "Practicing pediatrician. I evaluate clinical AI for clinicians.",
+    "bio": "Decision support, conversational health agents, parent-facing pediatric triage — different shapes, same question: is this safe to put in front of patients and the people taking care of them. This site is the harness I built because the public benchmarks don't catch the failures that actually hurt patients. It started as a way to evaluate the 15,000-character prompt I use in my own daily practice; the rest grew from there. Three frameworks, ~1,800 scored items, 330M tokens. If your team builds clinical AI and wants a physician-led eval instead of a vendor deck, get in touch.",
     "contact": {
       "email": "michael@hobbs.md",
       "linkedin": "https://www.linkedin.com/in/dochobbs/",
