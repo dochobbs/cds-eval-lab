@@ -535,6 +535,18 @@
     {
       "title": "Adversarial freshness + hallucination as the cheapest safety signal",
       "body": "Hand-built two adversarial suites: thirty guideline-changed-in-the-last-twelve-months freshness probes with old-answer/new-answer ground truth, and thirty false-premise traps that bait fabricated citations. A few hours each to build. More failure modes surfaced than the largest commercial bench combined."
+    },
+    {
+      "title": "Modular composition with specialized judges",
+      "body": "Compose the system prompt from a base plus one capability module per evaluation run; score each cell with a judge specialized to that module's rubric. When a capability regresses, the gate analysis points at it directly instead of disappearing into a global mean. The framework is the artifact — reusable for any composed-prompt system whose behavior emerges from interaction between parts."
+    },
+    {
+      "title": "Variance-as-signal",
+      "body": "Re-run each high-stakes scenario with different personas instead of trusting a single pass. On the pediatric triage harness this surfaced a 33% flip rate on red-flag scenarios that the aggregate pass-rate completely hid. Brittleness becomes a measurable property of the prompt, not a hunch — and the root cause (scope-boundary drift after escalation) was named precisely because variance pointed at the gate that was flipping."
+    },
+    {
+      "title": "Adversarial-archetype personas",
+      "body": "For conversational AI, the persona library is the brand. Name the failure mode first — skeptic, avoider, anxious patient, tech-averse — then build a persona designed to stress that mode across a multi-turn dialogue. Twenty adversarial archetypes surfaced more distinct failure modes than the twenty standard ones combined. Same pattern as adversarial single-turn traps, applied to dialogue."
     }
   ],
   "economics": {
