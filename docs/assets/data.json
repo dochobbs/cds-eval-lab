@@ -4,10 +4,10 @@
     "operator": "Michael Hobbs, MD",
     "tagline": "I measure whether clinical AI is actually safe to deploy.",
     "summary_stats": [
-      { "value": "1,400+", "label": "Clinical queries scored" },
-      { "value": "11", "label": "Systems benchmarked" },
-      { "value": "47", "label": "Critical errors caught" },
-      { "value": "~$3k/yr", "label": "API spend, annualized" }
+      { "value": "1,800+", "label": "Scored conversations + queries" },
+      { "value": "330M", "label": "Eval tokens spent" },
+      { "value": "13", "label": "Systems across 3 frameworks" },
+      { "value": "65", "label": "Adversarial probes hand-curated" }
     ]
   },
   "scope": {
