@@ -52,6 +52,15 @@
   // Workstream 2 — pediatric triage
   if (data.ws_peds) {
     setText("ws-peds-desc", data.ws_peds.system_description);
+    if (data.ws_peds.architecture) {
+      setText("ws-peds-arch-intro", data.ws_peds.architecture.intro);
+      setHTML("ws-peds-arch-rows", data.ws_peds.architecture.rows.map(r => `
+        <div class="arch-row">
+          <div class="a-label">${esc(r.label)}</div>
+          <div class="a-value">${esc(r.value)}</div>
+        </div>
+      `).join(""));
+    }
     setHTML("ws-peds-modules", data.ws_peds.modules.map(m => `
       <div class="module-row">
         <div class="m-code">${esc(m.code)}</div>

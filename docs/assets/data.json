@@ -30,11 +30,11 @@
       "code": "02",
       "title": "Pediatric triage assistant",
       "tagline": "Modular evaluation of a parent-facing AI system.",
-      "blurb": "Four capability modules (onboarding, communication patterns, parenting support, medical triage) scored independently by gate-based rubrics. Built to surface which capability regressed before the parent ever saw it.",
+      "blurb": "Four capability modules (onboarding, communication patterns, parenting support, medical triage) scored by 4 specialized judges across 5–8 gates each. Six prompt iterations, sixteen parent personas, three hundred and seventy-nine scored conversations.",
       "metrics": [
-        { "v": "4", "l": "Modules" },
         { "v": "79", "l": "Scenarios" },
-        { "v": "100%", "l": "Parenting support pass rate" }
+        { "v": "379", "l": "Scored conversations" },
+        { "v": "6", "l": "Prompt iterations (P1–P7)" }
       ],
       "anchor": "ws-peds"
     },
@@ -52,7 +52,18 @@
     }
   ],
   "ws_peds": {
-    "system_description": "Parent-facing pediatric triage assistant. Conversations are in lay language with caregivers — symptoms, behavior questions, developmental concerns — and the system has to land on a safe disposition (home / urgent / ER) without sounding clinical.",
+    "system_description": "Parent-facing pediatric triage assistant. Conversations happen in lay language with caregivers — symptoms, behavior questions, developmental concerns — and the system has to land on a safe disposition (home / urgent / ER) without sounding clinical. The harness composes a base prompt with one capability module per evaluation run, so a regression in one capability can be located without re-testing the others.",
+    "architecture": {
+      "intro": "The framework, not just the scenarios, is the work.",
+      "rows": [
+        { "label": "Modular prompts", "value": "5 components (base + 4 capability modules) composed at runtime per evaluation cell" },
+        { "label": "Specialized judges", "value": "4 module-specific judge prompts, each with its own 5–8-gate rubric" },
+        { "label": "Parent personas", "value": "16 archetypes varying medical literacy, anxiety, communication style, health-seeking behavior" },
+        { "label": "Prompt iterations", "value": "P1 → P7 over six months, each iteration targeting a specific gate failure" },
+        { "label": "Scored conversations", "value": "379 across baseline + variance + persona-expansion runs" },
+        { "label": "Variance testing", "value": "Each red-flag scenario run twice with random personas to surface prompt brittleness" }
+      ]
+    },
     "modules": [
       {
         "code": "ONB",
@@ -79,22 +90,34 @@
         "code": "RF",
         "name": "Medical triage",
         "n": 44,
-        "purpose": "Red-flag recognition and disposition accuracy. The safety floor of the entire system.",
-        "gates": ["Red flag recall", "Disposition correctness", "Time-sensitive action", "Safety net language"]
+        "purpose": "Red-flag recognition, disposition accuracy, and scope discipline. The safety floor of the entire system, decomposed into eight discrete decision points.",
+        "gates": ["Red flag recall", "Disposition correctness", "Time-sensitive action", "Safety-net language", "Information gathering", "Protocol adherence", "Scope boundary", "Conversation closure"]
       }
     ],
     "findings": [
       {
+        "headline": "Red-flag recognition: 100% accuracy on the twelve critical scenarios.",
+        "body": "Across breathing emergency, neonatal fever, meningococcemia, anaphylaxis, cardiac failure, and seven others — twelve of twelve correctly identified. The clinical reasoning is solid. The failures live elsewhere."
+      },
+      {
+        "headline": "Variance as signal: a third of red-flag runs flipped between PASS and FAIL.",
+        "body": "Re-running each red-flag scenario with a different parent persona surfaced inconsistency the single-pass score could not see. Four of twelve scenarios flipped — a 33% variance rate. Reliability isn't an aggregate score, it's whether the system holds up when the conversation goes a different direction."
+      },
+      {
+        "headline": "Every variance case had the same root cause: scope drift after escalation.",
+        "body": "Gate 7 (scope boundary) failures in 100% of the variance scenarios. The assistant promised post-hospital follow-up (\"I'll check in with you tomorrow\") outside its triage scope. Gate 8 (conversation closure) failures in 75% — fifteen-plus exchanges continuing after the parent was already in the ambulance. Pure prompt-level discipline problems, not clinical-reasoning failures."
+      },
+      {
         "headline": "Parenting support cleared every gate.",
-        "body": "Recent sample showed 100% pass across all five gates — validation, developmental normalization, parent-expertise respect, escalation, and identifying the real need. One scored conversation about oppositional behavior had the system correctly identify parental burnout as the root cause and commit to follow-up, which is exactly what a human clinician would do."
+        "body": "Recent sample: 100% pass across validation, developmental normalization, parent-expertise respect, escalation, and identifying the real need. One scored conversation about oppositional behavior correctly identified parental burnout as the root cause and committed to follow-up — exactly what a human clinician would have done."
       },
       {
-        "headline": "Medical triage is the active area.",
-        "body": "The modular gate analysis surfaced disposition errors on a subset of red-flag scenarios that didn't show up in any aggregate quality score. This is the value of decomposing eval into independent modules: a regression in one capability stops being invisible behind an averaged number."
+        "headline": "Disposition accuracy ~85%; clinical judgment is rarely the failure mode.",
+        "body": "When the system errs on disposition it's typically a protocol-mismatch deviation that a clinician would defend, not a misread of the clinical picture. Surfacing this required the gate decomposition: an aggregate quality score smoothed over the difference between \"wrong clinically\" and \"reasonable deviation.\""
       },
       {
-        "headline": "Gate-based scoring catches what holistic rubrics miss.",
-        "body": "A holistic 5-point rubric scored one parenting-support response highly because it sounded right. The gate-level analysis flagged that the system had skipped validation and gone straight to solving — a real failure mode the holistic score smoothed over."
+        "headline": "Decomposing the judge mattered as much as decomposing the prompt.",
+        "body": "Splitting the monolithic Claude-as-judge rubric into four specialized judges (one per module) sharpened the criteria language and made the gate failures legible. The framework is now the artifact, not just the scenarios — modular prompts, specialized judges, persona-driven robustness testing all reusable for any composed-prompt system."
       }
     ]
   },

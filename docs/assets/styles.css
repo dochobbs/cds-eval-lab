@@ -864,6 +864,35 @@ footer .links a:hover { color: var(--accent); }
   line-height: 1.3;
 }
 
+/* ---------- Architecture rows (workstream 02 framework) ---------- */
+.arch-rows {
+  border: 1px solid var(--border);
+  border-radius: var(--rad);
+  background: var(--bg-elev);
+  overflow: hidden;
+}
+.arch-row {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 32px;
+  padding: 18px 28px;
+  border-bottom: 1px solid var(--border);
+  align-items: baseline;
+}
+.arch-row:last-child { border-bottom: 0; }
+.arch-row .a-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent-2);
+}
+.arch-row .a-value {
+  font-size: 15px;
+  color: var(--text);
+  line-height: 1.5;
+}
+
 /* ---------- Module rows (workstream 02) ---------- */
 .modules {
   border: 1px solid var(--border);
@@ -1078,4 +1107,5 @@ footer .links a:hover { color: var(--accent); }
   .module-row { grid-template-columns: 60px 1fr; gap: 16px; padding: 22px; }
   .module-row .m-n { grid-column: 2; text-align: left; margin-top: 8px; font-size: 22px; }
   .archetypes { grid-template-columns: 1fr; }
+  .arch-row { grid-template-columns: 1fr; gap: 4px; padding: 16px 22px; }
 }
