@@ -24,12 +24,10 @@
   <div class="container">
     <div class="brand">CDS Eval Lab<span class="dot">.</span></div>
     <ul>
-      <li><a href="#suites">Suites</a></li>
-      <li><a href="#queries">Queries</a></li>
-      <li><a href="#leaderboard">Leaderboard</a></li>
-      <li><a href="#timeline">Evolution</a></li>
-      <li><a href="#economics">Economics</a></li>
-      <li><a href="#findings">Findings</a></li>
+      <li><a href="#workstreams">Workstreams</a></li>
+      <li><a href="#suites">CDS</a></li>
+      <li><a href="#ws-peds">Peds triage</a></li>
+      <li><a href="#ws-conv">Conversational</a></li>
       <li><a href="#contributions">Patterns</a></li>
       <li><a href="#about">About</a></li>
     </ul>
@@ -41,20 +39,36 @@
     <div class="eyebrow">Clinical Decision Support · Independent Evaluation</div>
     <h1>I measure whether clinical AI is <em>actually safe</em> to put in front of patients and clinicians.</h1>
     <p class="sub">
-      A physician-built harness — seven benchmark suites, eleven systems, fourteen
-      hundred scored queries. Hand-curated traps, blinded results, real failure
-      modes. Built and run from a working pediatric practice over the last fifteen
-      months.
+      A physician-built lab for evaluating clinical AI across three eval
+      frameworks: single-turn decision support, modular pediatric triage, and
+      multi-turn conversational health agents. Hand-curated traps, blinded
+      results, real failure modes. Built and run from a working pediatric
+      practice.
     </p>
     <div class="statgrid" id="statgrid"></div>
   </div>
 </header>
 
-<section id="dimensions" class="tight">
+<section id="workstreams">
   <div class="container">
     <div class="section-head">
       <span class="num">01</span>
-      <h2>What I evaluate</h2>
+      <h2>Three eval frameworks — <em>different shapes, different rubrics</em></h2>
+    </div>
+    <p class="econ-intro" style="max-width: 720px;">
+      Clinical AI doesn't have one shape. Each of these workstreams is a separate
+      harness with its own rubric stack, scored independently, because a system
+      that wins on one shape can lose on another. The lab below runs all three.
+    </p>
+    <div class="ws-grid" id="workstreams-list"></div>
+  </div>
+</section>
+
+<section id="dimensions" class="tight">
+  <div class="container">
+    <div class="section-head">
+      <span class="num">01 · 1</span>
+      <h2>What I evaluate at the CDS layer</h2>
     </div>
     <div class="cards c3">
       <div class="card">
@@ -90,7 +104,7 @@
 <section id="suites">
   <div class="container">
     <div class="section-head">
-      <span class="num">02</span>
+      <span class="num">01 · 2</span>
       <h2>The benchmark stack — <em>seven hand-curated suites</em></h2>
     </div>
     <div class="suites" id="suite-list"></div>
@@ -100,7 +114,7 @@
 <section id="queries">
   <div class="container">
     <div class="section-head">
-      <span class="num">03</span>
+      <span class="num">01 · 3</span>
       <h2>Example queries</h2>
     </div>
     <p style="max-width:720px; color:var(--text-dim); margin:0 0 36px;">
@@ -114,7 +128,7 @@
 <section id="leaderboard">
   <div class="container">
     <div class="section-head">
-      <span class="num">04</span>
+      <span class="num">01 · 4</span>
       <h2>Blinded leaderboard</h2>
     </div>
     <p style="max-width:720px; color:var(--text-dim); margin:0 0 36px;">
@@ -141,10 +155,8 @@
     <div class="lb-note">All values 0–100 unless marked. Sorted by content-dimension total.</div>
 
     <div style="margin-top:64px;">
-      <div class="section-head" style="margin-bottom:24px;">
-        <span class="num">04 · b</span>
-        <h2 style="font-size:24px;">Per-suite breakdown</h2>
-      </div>
+      <p class="kicker" style="margin-bottom:12px;">Per-suite breakdown</p>
+      <h3 style="font-family: var(--serif); font-weight: 500; font-size: 24px; margin: 0 0 24px; letter-spacing: -0.01em; color: var(--text);">How each system holds up across the rest of the stack</h3>
       <div class="suite-table" id="suite-table"></div>
     </div>
   </div>
@@ -153,8 +165,8 @@
 <section id="timeline">
   <div class="container">
     <div class="section-head">
-      <span class="num">05</span>
-      <h2>How the harness evolved — <em>four months of iteration</em></h2>
+      <span class="num">01 · 5</span>
+      <h2>How the CDS harness evolved — <em>four months of iteration</em></h2>
     </div>
     <div class="timeline" id="timeline-list"></div>
     <div id="timeline-framing"></div>
@@ -164,7 +176,7 @@
 <section id="economics">
   <div class="container">
     <div class="section-head">
-      <span class="num">06</span>
+      <span class="num">01 · 6</span>
       <h2>Where the eval budget actually goes</h2>
     </div>
     <p class="econ-intro" id="econ-intro"></p>
@@ -176,17 +188,64 @@
 <section id="findings">
   <div class="container">
     <div class="section-head">
-      <span class="num">07</span>
-      <h2>What the evaluations actually showed</h2>
+      <span class="num">01 · 7</span>
+      <h2>What the CDS evaluations showed</h2>
     </div>
     <div class="findings" id="findings-grid"></div>
+  </div>
+</section>
+
+<section id="ws-peds">
+  <div class="container">
+    <div class="section-head">
+      <span class="num">02</span>
+      <h2>Pediatric triage assistant — <em>modular by capability</em></h2>
+    </div>
+    <p class="econ-intro" id="ws-peds-desc"></p>
+
+    <div style="margin-top: 16px;">
+      <p class="kicker" style="margin-bottom: 24px;">Four modules, scored independently</p>
+      <div class="modules" id="ws-peds-modules"></div>
+    </div>
+
+    <div style="margin-top: 56px;">
+      <p class="kicker" style="margin-bottom: 24px;">What the modules surfaced</p>
+      <div class="findings" id="ws-peds-findings"></div>
+    </div>
+  </div>
+</section>
+
+<section id="ws-conv">
+  <div class="container">
+    <div class="section-head">
+      <span class="num">03</span>
+      <h2>Conversational health agent — <em>scored across twenty-five turns</em></h2>
+    </div>
+    <p class="econ-intro" id="ws-conv-desc"></p>
+
+    <div style="margin-top: 16px;">
+      <p class="kicker" style="margin-bottom: 14px;">Methodology</p>
+      <h3 style="font-family: var(--serif); font-weight: 500; font-size: 24px; margin: 0 0 16px; letter-spacing: -0.015em; color: var(--text);" id="ws-conv-sim-title"></h3>
+      <p style="font-size: 16px; line-height: 1.6; color: var(--text-dim); max-width: 720px;" id="ws-conv-sim-body"></p>
+    </div>
+
+    <div style="margin-top: 56px;">
+      <p class="kicker" style="margin-bottom: 14px;">Forty personas, twenty of them adversarial</p>
+      <p style="font-size: 16px; line-height: 1.6; color: var(--text-dim); max-width: 720px; margin: 0 0 24px;" id="ws-conv-personas-intro"></p>
+      <div class="archetypes" id="ws-conv-archetypes"></div>
+    </div>
+
+    <div style="margin-top: 56px;">
+      <p class="kicker" style="margin-bottom: 24px;">What multi-turn evaluation showed</p>
+      <div class="findings" id="ws-conv-findings"></div>
+    </div>
   </div>
 </section>
 
 <section id="contributions">
   <div class="container">
     <div class="section-head">
-      <span class="num">08</span>
+      <span class="num">04</span>
       <h2>Methodology contributions — <em>patterns worth taking elsewhere</em></h2>
     </div>
     <p class="econ-intro">

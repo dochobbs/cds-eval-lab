@@ -27,6 +27,77 @@
   // Scope callout (single)
   setText("scope-blurb", data.scope.blurb);
 
+  // Workstreams overview
+  if (data.workstreams) {
+    setHTML("workstreams-list", data.workstreams.map(w => `
+      <a class="ws-card" href="#${esc(w.anchor)}">
+        <div class="ws-head">
+          <span class="ws-code">Workstream ${esc(w.code)}</span>
+          <h3>${esc(w.title)}</h3>
+          <p class="ws-tag">${esc(w.tagline)}</p>
+        </div>
+        <p class="ws-blurb">${esc(w.blurb)}</p>
+        <div class="ws-metrics">
+          ${w.metrics.map(m => `
+            <div class="ws-metric">
+              <div class="v">${esc(m.v)}</div>
+              <div class="l">${esc(m.l)}</div>
+            </div>
+          `).join("")}
+        </div>
+      </a>
+    `).join(""));
+  }
+
+  // Workstream 2 — pediatric triage
+  if (data.ws_peds) {
+    setText("ws-peds-desc", data.ws_peds.system_description);
+    setHTML("ws-peds-modules", data.ws_peds.modules.map(m => `
+      <div class="module-row">
+        <div class="m-code">${esc(m.code)}</div>
+        <div>
+          <div class="m-name">${esc(m.name)}</div>
+          <p class="m-purpose">${esc(m.purpose)}</p>
+          <div class="m-gates">
+            ${m.gates.map(g => `<span class="gate">${esc(g)}</span>`).join("")}
+          </div>
+        </div>
+        <div class="m-n">${esc(m.n)}<span class="lbl">scenarios</span></div>
+      </div>
+    `).join(""));
+    setHTML("ws-peds-findings", data.ws_peds.findings.map((f, i) => `
+      <div class="finding">
+        <div class="num">FINDING ${String(i + 1).padStart(2, "0")}</div>
+        <h3>${esc(f.headline)}</h3>
+        <p>${esc(f.body)}</p>
+      </div>
+    `).join(""));
+  }
+
+  // Workstream 3 — conversational health
+  if (data.ws_conv) {
+    setText("ws-conv-desc", data.ws_conv.system_description);
+    setText("ws-conv-sim-title", data.ws_conv.simulator.title);
+    setText("ws-conv-sim-body", data.ws_conv.simulator.body);
+    setText("ws-conv-personas-intro", data.ws_conv.personas.intro);
+    setHTML("ws-conv-archetypes", data.ws_conv.personas.archetypes.map(a => `
+      <div class="archetype">
+        <div class="a-code">${esc(a.code)}</div>
+        <div>
+          <div class="a-label">${esc(a.label)}</div>
+          <p class="a-tests">${esc(a.tests)}</p>
+        </div>
+      </div>
+    `).join(""));
+    setHTML("ws-conv-findings", data.ws_conv.findings.map((f, i) => `
+      <div class="finding">
+        <div class="num">FINDING ${String(i + 1).padStart(2, "0")}</div>
+        <h3>${esc(f.headline)}</h3>
+        <p>${esc(f.body)}</p>
+      </div>
+    `).join(""));
+  }
+
   // Suites — with provenance and turn tags
   const suiteTagClass = label => {
     const l = label.toLowerCase();

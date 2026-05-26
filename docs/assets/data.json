@@ -13,6 +13,121 @@
   "scope": {
     "blurb": "The harness covers both single-turn lookups (one prompt, one answer, one score) and multi-turn dialogue (parent vignettes, clinician follow-ups, conversation budgets). Different failure modes, different rubrics — measured separately so a system can't trade one for the other."
   },
+  "workstreams": [
+    {
+      "code": "01",
+      "title": "Clinical decision support",
+      "tagline": "Single-turn lookups, primary care and pediatrics.",
+      "blurb": "Hand-curated query suites stress-testing what frontier LLMs and specialist CDS APIs do at the point of care. The deep-dive that runs the length of this page.",
+      "metrics": [
+        { "v": "11", "l": "Systems benchmarked" },
+        { "v": "7", "l": "Hand-curated suites" },
+        { "v": "1,400+", "l": "Scored queries" }
+      ],
+      "anchor": "dimensions"
+    },
+    {
+      "code": "02",
+      "title": "Pediatric triage assistant",
+      "tagline": "Modular evaluation of a parent-facing AI system.",
+      "blurb": "Four capability modules (onboarding, communication patterns, parenting support, medical triage) scored independently by gate-based rubrics. Built to surface which capability regressed before the parent ever saw it.",
+      "metrics": [
+        { "v": "4", "l": "Modules" },
+        { "v": "79", "l": "Scenarios" },
+        { "v": "100%", "l": "Parenting support pass rate" }
+      ],
+      "anchor": "ws-peds"
+    },
+    {
+      "code": "03",
+      "title": "Conversational health agent",
+      "tagline": "Multi-turn dialogue evaluation for chronic disease management.",
+      "blurb": "Synthetic patient simulator running multi-turn conversations (up to 25 turns each) against an adult chronic-disease health agent. Forty personas including twenty adversarial archetypes (skepticism, avoidance, anxiety, tech aversion).",
+      "metrics": [
+        { "v": "40", "l": "Personas (20 adversarial)" },
+        { "v": "25", "l": "Max turns per conversation" },
+        { "v": "18", "l": "Avg conversation depth" }
+      ],
+      "anchor": "ws-conv"
+    }
+  ],
+  "ws_peds": {
+    "system_description": "Parent-facing pediatric triage assistant. Conversations are in lay language with caregivers — symptoms, behavior questions, developmental concerns — and the system has to land on a safe disposition (home / urgent / ER) without sounding clinical.",
+    "modules": [
+      {
+        "code": "ONB",
+        "name": "Onboarding",
+        "n": 12,
+        "purpose": "Collect child info, calculate age correctly, never assume.",
+        "gates": ["Info collection", "Birth date handling", "Age calculation"]
+      },
+      {
+        "code": "COM",
+        "name": "Communication patterns",
+        "n": 12,
+        "purpose": "Match the parent's register, ask one question at a time, avoid robotic clinician-speak.",
+        "gates": ["Energy matching", "One question at a time", "Lay language", "No diagnostic overconfidence"]
+      },
+      {
+        "code": "PAR",
+        "name": "Parenting support",
+        "n": 11,
+        "purpose": "Validate before solving. Normalize developmentally. Escalate when an apparent parenting question is actually a medical one.",
+        "gates": ["Validate first", "Developmental knowledge", "Respect parent expertise", "Escalation judgment", "Identify the real need"]
+      },
+      {
+        "code": "RF",
+        "name": "Medical triage",
+        "n": 44,
+        "purpose": "Red-flag recognition and disposition accuracy. The safety floor of the entire system.",
+        "gates": ["Red flag recall", "Disposition correctness", "Time-sensitive action", "Safety net language"]
+      }
+    ],
+    "findings": [
+      {
+        "headline": "Parenting support cleared every gate.",
+        "body": "Recent sample showed 100% pass across all five gates — validation, developmental normalization, parent-expertise respect, escalation, and identifying the real need. One scored conversation about oppositional behavior had the system correctly identify parental burnout as the root cause and commit to follow-up, which is exactly what a human clinician would do."
+      },
+      {
+        "headline": "Medical triage is the active area.",
+        "body": "The modular gate analysis surfaced disposition errors on a subset of red-flag scenarios that didn't show up in any aggregate quality score. This is the value of decomposing eval into independent modules: a regression in one capability stops being invisible behind an averaged number."
+      },
+      {
+        "headline": "Gate-based scoring catches what holistic rubrics miss.",
+        "body": "A holistic 5-point rubric scored one parenting-support response highly because it sounded right. The gate-level analysis flagged that the system had skipped validation and gone straight to solving — a real failure mode the holistic score smoothed over."
+      }
+    ]
+  },
+  "ws_conv": {
+    "system_description": "Adult chronic-disease conversational health agent — type-2 diabetes, obesity, hypertension, GERD. Patients ask in their own words, multi-turn, with all the usual real-life noise (interruptions, partial information, contradictions, denial).",
+    "simulator": {
+      "title": "The agent conversation simulator",
+      "body": "A frontier LLM plays the patient. The agent under test plays itself. Conversations are scripted only by persona profile (history, motivation, communication style, adversarial archetype if any) and run for up to twenty-five turns. Each conversation is scored on partnership quality, red-flag handling, constraint acknowledgement, and continuity across turns."
+    },
+    "personas": {
+      "intro": "Forty personas. Twenty are standard archetypes (newly diagnosed, well-managed, transitioning meds, peri-procedural). Twenty are adversarial archetypes built to stress specific failure modes.",
+      "archetypes": [
+        { "code": "SKEP", "label": "The skeptic", "tests": "Does the agent earn trust without being defensive?" },
+        { "code": "AVOID", "label": "The avoider", "tests": "Does the agent name the elephant in the room?" },
+        { "code": "ANX", "label": "The anxious patient", "tests": "Does the agent reassure without dismissing?" },
+        { "code": "TECH", "label": "The tech-averse", "tests": "Does the agent meet the patient where they are technologically?" }
+      ]
+    },
+    "findings": [
+      {
+        "headline": "Average conversation depth was eighteen turns.",
+        "body": "Across twenty-five completed conversations in a recent full run, the agent sustained engagement well past the point where most lookup-style evals stop measuring. Single-turn benchmarks would have scored this system favorably and entirely missed the dimensions where it shines."
+      },
+      {
+        "headline": "Adversarial personas are the cheapest signal.",
+        "body": "The twenty adversarial archetypes (skeptic, avoider, anxious, tech-averse) surfaced more distinct failure modes than the twenty standard personas combined. The pattern from CDS work holds: hand-curated adversarial cases differentiate better than larger but uniform sets."
+      },
+      {
+        "headline": "Multi-turn surfaces failure modes lookup cannot.",
+        "body": "Personality consistency, memory of earlier disclosures, willingness to revisit a previous turn — these only show up over a sustained dialogue. A lookup-style harness would not have flagged the failures the simulator caught."
+      }
+    ]
+  },
   "suites": [
     {
       "code": "GOLDEN",
