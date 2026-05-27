@@ -1,0 +1,12 @@
+Session Date: 2026-05-27
+Project: cds-eval-lab
+Branch: main
+
+Git Stats:
+- Commits: 11 (since ff6fdce initial)
+- Files Modified: 8 (across all commits)
+- Lines Added: ~2,418
+- Lines Removed: ~1,298
+
+Site live at: https://dochobbs.github.io/cds-eval-lab/
+Repo: https://github.com/dochobbs/cds-eval-lab (public)
