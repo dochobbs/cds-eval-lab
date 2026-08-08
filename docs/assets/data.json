@@ -547,6 +547,14 @@
     {
       "title": "Adversarial-archetype personas",
       "body": "For conversational AI, the persona library is the brand. Name the failure mode first — skeptic, avoider, anxious patient, tech-averse — then build a persona designed to stress that mode across a multi-turn dialogue. Twenty adversarial archetypes surfaced more distinct failure modes than the twenty standard ones combined. Same pattern as adversarial single-turn traps, applied to dialogue."
+    },
+    {
+      "title": "Publishing the prompt, not just the score",
+      "body": "A prompt-versus-model claim is unfalsifiable unless the prompt ships with it. The two CDS prompts used in this lab are published in full. They sit on a search-budget ladder: the first runs on parametric knowledge with no retrieval; the second spends three searches on three deliberately independent framings \u2014 primary guideline body, recent updates, and the relevant special population \u2014 then has to declare which frames came back empty. Everything below the depth requirements is identical between them; the whole delta is a retrieval preamble, a synthesis block, and a rule forbidding the model from filling a gap from memory. Adding searches is not automatically an improvement \u2014 retrieval can surface low-relevance results that a model treats as confirmation, which is worse than no retrieval because the confabulation now carries citations. The refuse-on-empty rule is what keeps the extra budget from backfiring.",
+      "links": [
+        { "label": "ws2 — no search", "href": "prompts/cds_ws2.txt" },
+        { "label": "ws5 — three parallel frames", "href": "prompts/cds_ws5_parallel.txt" }
+      ]
     }
   ],
   "economics": {

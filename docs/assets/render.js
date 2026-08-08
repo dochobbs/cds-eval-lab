@@ -228,6 +228,9 @@
         <div class="body">
           <h3>${esc(c.title)}</h3>
           <p>${esc(c.body)}</p>
+          ${(c.links || []).length ? `<p class="contribution-links">${
+            c.links.map(l => `<a href="${esc(l.href)}">${esc(l.label)}</a>`).join("")
+          }</p>` : ""}
         </div>
       </div>
     `).join(""));
